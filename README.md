@@ -1,6 +1,6 @@
 # 🦋 My Budget Planner
 
-A beautiful, offline-first personal budget planner that runs entirely in your browser — no accounts, no servers, no subscriptions.
+A clean, minimal monthly budget planner that runs entirely in the browser — no accounts, no servers, no subscriptions.
 
 🔗 **Live link: [keatyi.github.io/budget-planner](https://keatyi.github.io/budget-planner/)**
 
