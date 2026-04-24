@@ -1053,6 +1053,18 @@ function saveModal() {
   const sum = curData().categories.reduce((a,c) => a+c.pct, 0);
   if (sum !== 100 && curData().categories.length)
     curData().categories[curData().categories.length-1].pct += 100-sum;
+
+  // Propagate name + colour changes to all other months so Year Summary stays in sync
+  const updatedMap = new Map(curData().categories.map(c => [c.id, c]));
+  S.months.forEach((month, mi) => {
+    if (mi === curMonth) return;
+    month.categories = month.categories.map(c => {
+      const updated = updatedMap.get(c.id);
+      if (!updated) return c;
+      return { ...c, name: updated.name, color: { ...updated.color } };
+    });
+  });
+
   save();
   closeModal();
   buildPills();
@@ -1153,6 +1165,7 @@ renderMonthBar();
 loadMonthIntoUI();
 renderSummary();
 renderBreakdown();
+
 
 </script>
 </body>
