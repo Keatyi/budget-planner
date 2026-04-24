@@ -70,7 +70,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--mist); color:var(--ink
 .header-sub { font-size:12px; color:var(--gray); margin-bottom:1.5rem; }
 
 /* Month tabs */
-.month-bar { display:flex; align-items:center; gap:6px; margin-bottom:1.5rem; flex-wrap:wrap; }
+.month-bar { display:flex; align-items:center; gap:6px; margin-bottom:0.75rem; flex-wrap:wrap; }
 .month-tab {
   font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500;
   padding:5px 13px; border-radius:50px; border:1px solid var(--border);
@@ -79,13 +79,21 @@ body { font-family:'DM Sans',sans-serif; background:var(--mist); color:var(--ink
 .month-tab:hover { border-color:var(--lavender-md); color:var(--lavender-md); }
 .month-tab.active { background:var(--lavender-md); border-color:var(--lavender-md); color:#fff; }
 .month-tab.has-data { border-color:var(--lavender); }
-.month-actions { display:flex; gap:6px; margin-left:auto; }
-.month-action-btn {
-  font-family:'DM Sans',sans-serif; font-size:11px; padding:5px 11px;
-  border-radius:50px; border:1px solid var(--border); background:var(--white);
-  color:var(--gray); cursor:pointer; transition:all .18s; white-space:nowrap;
+.month-actions {
+  display:flex; gap:8px; margin-bottom:1.5rem; align-items:center;
+  padding:10px 14px; background:var(--white); border:1px solid var(--border);
+  border-radius:var(--radius-sm); box-shadow:var(--shadow);
 }
-.month-action-btn:hover { border-color:var(--lavender-md); color:var(--lavender-md); }
+.month-actions-label {
+  font-size:10px; font-weight:500; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--gray); margin-right:4px; white-space:nowrap;
+}
+.month-action-btn {
+  font-family:'DM Sans',sans-serif; font-size:11px; padding:5px 13px;
+  border-radius:50px; border:1px solid var(--border); background:var(--mist);
+  color:var(--gray); cursor:pointer; transition:all .18s; white-space:nowrap; font-weight:500;
+}
+.month-action-btn:hover { border-color:var(--lavender-md); color:var(--lavender-md); background:var(--lavender-lt); }
 
 /* View tabs */
 .view-tabs { display:flex; gap:6px; margin-bottom:1.5rem; }
@@ -154,7 +162,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--mist); color:var(--ink
 }
 
 /* Monthly note */
-.note-row { margin-bottom:1.5rem; }
+.note-row { margin-bottom:1.5rem; margin-top:1.5rem; }
 .note-input {
   width:100%; border:1px solid var(--border); border-radius:var(--radius-sm);
   background:var(--white); padding:10px 14px; font-size:12px; color:var(--ink);
@@ -279,7 +287,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--mist); color:var(--ink
   body { background:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 
   .theme-toggle, .save-pdf-btn, .blob1, .blob2, .bf-strip,
-  .view-tabs, .month-bar, .pct-warn, .add-btn, .del-btn,
+  .view-tabs, .month-bar, .month-actions, .pct-warn, .add-btn, .del-btn,
   .edit-cats-btn, .save-dot, #notice { display:none !important; }
 
   html, body { overflow:visible; height:auto; }
@@ -377,6 +385,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--mist); color:var(--ink
   /* Footnote under table */
   #history-content > div:last-child { display:none; }
 }
+
 </style>
 </head>
 <body>
@@ -478,12 +487,13 @@ body { font-family:'DM Sans',sans-serif; background:var(--mist); color:var(--ink
 
     <div class="summary-grid" id="main-cards"></div>
 
+    <div id="month-actions-row"></div>
+
+    <div class="breakdown-grid" id="breakdown"></div>
 
     <div class="note-row">
       <textarea class="note-input" id="month-note" rows="2" placeholder="Notes for this month… (e.g. Raya spending, bought laptop)"></textarea>
     </div>
-
-    <div class="breakdown-grid" id="breakdown"></div>
   </div>
 
   <!-- ── HISTORY VIEW ── -->
@@ -619,11 +629,18 @@ function renderMonthBar() {
       onclick="switchMonth(${i})">${m}</button>`;
   }).join("");
 
-  bar.innerHTML = pills + `
-    <div class="month-actions">
+  bar.innerHTML = pills;
+
+  // Actions row lives in the HTML as a static placeholder — just update contents
+  const actionsRow = document.getElementById("month-actions-row");
+  if (actionsRow) {
+    actionsRow.className = "month-actions";
+    actionsRow.innerHTML = `
+      <span class="month-actions-label">Quick actions</span>
       <button class="month-action-btn" onclick="copyLastMonth()" title="Copy previous month's amounts into this month">↩ Copy last month</button>
       <button class="month-action-btn" onclick="clearAmounts()" title="Zero all expense amounts for this month" style="color:#dc2626;border-color:rgba(220,38,38,0.3);">✕ Clear amounts</button>
-    </div>`;
+    `;
+  }
 }
 
 function switchMonth(m) {
@@ -1136,6 +1153,7 @@ renderMonthBar();
 loadMonthIntoUI();
 renderSummary();
 renderBreakdown();
+
 </script>
 </body>
 </html>
