@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en" id="root">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Budget Planner</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦋</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --lavender:    #c4b5f4;
+  --lavender-lt: #ede9fe;
+  --lavender-md: #a78bfa;
+  --periwinkle:  #818cf8;
+  --sky:         #93c5fd;
+  --sky-lt:      #dbeafe;
+  --sky-md:      #60a5fa;
+  --plum:        #7c3aed;
+  --blush:       #e0d7f8;
+  --mist:        #f5f3ff;
+  --ink:         #2e1065;
+  --ink-soft:    #4c1d95;
+  --gray:        #6b7280;
+  --white:       #ffffff;
+  --border:      rgba(167,139,250,0.25);
+  --shadow:      0 4px 24px rgba(124,58,237,0.08);
+  --radius:      16px;
+  --radius-sm:   8px;
+}
+[data-theme="dark"] {
+  --lavender:    #a78bfa;
+  --lavender-lt: #1e1433;
+  --lavender-md: #a78bfa;
+  --periwinkle:  #818cf8;
+  --sky:         #60a5fa;
+  --sky-lt:      #0f1f3d;
+  --sky-md:      #3b82f6;
+  --plum:        #7c3aed;
+  --blush:       #2a1f4a;
+  --mist:        #0f0a1e;
+  --ink:         #ede9fe;
+  --ink-soft:    #c4b5f4;
+  --gray:        #9ca3af;
+  --white:       #1a1030;
+  --border:      rgba(167,139,250,0.18);
+  --shadow:      0 4px 24px rgba(0,0,0,0.35);
+}
+* { box-sizing: border-box; margin:0; padding:0; }
+body { font-family:'DM Sans',sans-serif; background:var(--mist); color:var(--ink); min-height:100vh; overflow-x:hidden; }
+
+.blob1,.blob2 { position:fixed; border-radius:50%; pointer-events:none; z-index:0; filter:blur(80px); }
+.blob1 { width:480px; height:480px; background:rgba(196,181,244,0.35); top:-120px; right:-120px; }
+.blob2 { width:400px; height:400px; background:rgba(147,197,253,0.3); bottom:-100px; left:-100px; }
+[data-theme="dark"] .blob1 { background:rgba(139,92,246,0.25); }
+[data-theme="dark"] .blob2 { background:rgba(59,130,246,0.15); }
+
+.wrap { max-width:900px; margin:0 auto; padding:2rem 1.5rem 3rem; position:relative; z-index:1; }
+
+/* Butterflies */
+.bf-strip { display:flex; align-items:center; gap:12px; margin-bottom:0.5rem; opacity:0.55; }
+
+/* Header */
+.header-title {
+  font-family:'Shippori Mincho',serif; font-size:28px; font-weight:600;
+  color:var(--ink); display:flex; align-items:center; gap:8px; margin-bottom:4px;
+}
+.header-title span { color:var(--lavender-md); }
+.save-dot { width:6px; height:6px; border-radius:50%; background:var(--periwinkle); opacity:0; transition:opacity .4s; display:inline-block; vertical-align:middle; }
+.save-dot.show { opacity:1; }
+.header-sub { font-size:12px; color:var(--gray); margin-bottom:1.5rem; }
+
+/* Month tabs */
+.month-bar { display:flex; align-items:center; gap:6px; margin-bottom:1.5rem; flex-wrap:wrap; }
+.month-tab {
+  font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500;
+  padding:5px 13px; border-radius:50px; border:1px solid var(--border);
+  background:var(--white); color:var(--gray); cursor:pointer; transition:all .18s;
+}
+.month-tab:hover { border-color:var(--lavender-md); color:var(--lavender-md); }
+.month-tab.active { background:var(--lavender-md); border-color:var(--lavender-md); color:#fff; }
+.month-tab.has-data { border-color:var(--lavender); }
+.month-actions { display:flex; gap:6px; margin-left:auto; }
+.month-action-btn {
+  font-family:'DM Sans',sans-serif; font-size:11px; padding:5px 11px;
+  border-radius:50px; border:1px solid var(--border); background:var(--white);
+  color:var(--gray); cursor:pointer; transition:all .18s; white-space:nowrap;
+}
+.month-action-btn:hover { border-color:var(--lavender-md); color:var(--lavender-md); }
+
+/* View tabs */
+.view-tabs { display:flex; gap:6px; margin-bottom:1.5rem; }
+.view-tab {
+  font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500;
+  padding:6px 16px; border-radius:50px; border:1px solid var(--border);
+  background:var(--white); color:var(--gray); cursor:pointer; transition:all .18s;
+}
+.view-tab.active { background:var(--plum); border-color:var(--plum); color:#fff; }
+.view-tab:hover:not(.active) { border-color:var(--lavender-md); color:var(--lavender-md); }
+
+/* Income */
+.income-card {
+  background:var(--white); border:1px solid var(--border);
+  border-radius:var(--radius); padding:14px 20px; box-shadow:var(--shadow);
+  display:flex; align-items:center; gap:12px; margin-bottom:1.5rem; width:fit-content;
+}
+.income-label { font-size:13px; color:var(--gray); font-weight:500; white-space:nowrap; }
+.income-rm { font-size:13px; color:var(--lavender-md); font-weight:500; }
+.income-input {
+  border:none; background:transparent;
+  font-family:'Shippori Mincho',serif; font-size:22px; font-weight:600;
+  color:var(--plum); width:160px; outline:none;
+}
+.income-input:focus { border-bottom:1.5px solid var(--lavender-md); }
+
+/* Section label */
+.section-label { font-size:10px; font-weight:500; letter-spacing:.15em; text-transform:uppercase; color:var(--lavender-md); margin-bottom:8px; }
+
+/* Pct pills */
+.pct-row { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:1.5rem; align-items:center; }
+.pct-pill {
+  display:flex; align-items:center; gap:6px;
+  background:var(--white); border:1px solid var(--border);
+  border-radius:50px; padding:6px 14px; box-shadow:0 2px 8px rgba(124,58,237,0.06);
+}
+.pct-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.pct-name { font-size:12px; color:var(--gray); font-weight:500; }
+.pct-input {
+  border:none; background:transparent;
+  font-family:'Shippori Mincho',serif; font-size:14px; font-weight:600;
+  color:var(--plum); width:36px; text-align:right; outline:none;
+}
+.pct-sym { font-size:11px; color:var(--lavender-md); }
+.pct-plus { color:var(--lavender); font-size:16px; }
+.pct-warn { font-size:12px; color:#dc2626; margin-top:4px; margin-bottom:.8rem; display:none; }
+[data-theme="dark"] .pct-warn { color:#f87171; }
+
+/* Summary cards */
+.summary-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; margin-bottom:1.5rem; }
+.summary-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:0; box-shadow:var(--shadow); overflow:hidden; }
+.sc-accent { height:4px; width:100%; display:block; margin-bottom:12px; }
+.sc-body { padding:0 16px 14px; }
+.sc-top { display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+.sc-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.sc-name { font-size:11px; font-weight:500; color:var(--gray); flex:1; }
+.sc-pct  { font-size:10px; color:var(--lavender-md); }
+.sc-amount { font-family:'Shippori Mincho',serif; font-size:20px; font-weight:600; color:var(--ink); margin-bottom:4px; }
+.sc-status { font-size:11px; }
+
+/* Notice */
+.notice {
+  background:var(--white); border:1px solid var(--border);
+  border-left:3px solid var(--lavender-md); border-radius:12px;
+  padding:10px 16px; font-size:12px; color:var(--gray); margin-bottom:1.5rem; box-shadow:var(--shadow);
+}
+
+/* Monthly note */
+.note-row { margin-bottom:1.5rem; }
+.note-input {
+  width:100%; border:1px solid var(--border); border-radius:var(--radius-sm);
+  background:var(--white); padding:10px 14px; font-size:12px; color:var(--ink);
+  font-family:'DM Sans',sans-serif; outline:none; box-shadow:var(--shadow);
+  resize:none; transition:border-color .15s;
+}
+.note-input:focus { border-color:var(--lavender-md); }
+.note-input::placeholder { color:var(--gray); opacity:.6; }
+
+/* Breakdown */
+.breakdown-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media (max-width:560px) { .breakdown-grid { grid-template-columns:1fr; } }
+.breakdown-card { background:var(--white); border:1px solid var(--border); border-radius:20px; padding:18px; box-shadow:var(--shadow); }
+.bc-header { display:flex; align-items:center; gap:8px; margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid var(--blush); }
+.bc-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.bc-name { font-family:'Shippori Mincho',serif; font-size:15px; font-weight:600; color:var(--ink); flex:1; }
+.bc-budget { font-size:12px; color:var(--gray); }
+
+/* Expense rows */
+.exp-row { margin-bottom:10px; }
+.exp-top { display:flex; align-items:center; gap:6px; margin-bottom:3px; }
+.exp-label { flex:1; min-width:0; border:none; background:transparent; font-size:12px; color:var(--ink); outline:none; font-family:'DM Sans',sans-serif; border-bottom:1px solid transparent; }
+.exp-label:focus { border-bottom-color:var(--lavender); }
+.exp-rm { font-size:10px; color:var(--lavender-md); font-weight:500; flex-shrink:0; }
+.exp-amt {
+  width:80px; text-align:right; border:1px solid transparent; border-radius:var(--radius-sm);
+  padding:3px 7px; font-size:12px; font-family:'Shippori Mincho',serif; font-weight:600;
+  color:var(--plum); background:var(--mist); outline:none; transition:border-color .15s,background .15s;
+}
+.exp-amt:focus { border-color:var(--lavender-md); background:var(--white); }
+[data-theme="dark"] .exp-amt { background:#130d26; }
+[data-theme="dark"] .exp-amt:focus { background:#1e1433; }
+.exp-accum { font-size:10px; color:var(--lavender-md); white-space:nowrap; font-family:'Shippori Mincho',serif; }
+.del-btn { background:none; border:none; cursor:pointer; color:rgba(167,139,250,0.4); font-size:16px; padding:0 2px; line-height:1; flex-shrink:0; transition:color .2s; }
+.del-btn:hover { color:#dc2626; }
+.bar-bg { border-radius:4px; height:3px; }
+.bar-fill { height:3px; border-radius:4px; transition:width .4s cubic-bezier(.4,0,.2,1); }
+
+.add-btn { width:100%; background:none; border:1.5px dashed rgba(167,139,250,0.4); border-radius:10px; cursor:pointer; color:var(--lavender-md); font-size:12px; padding:7px; margin-top:8px; font-family:'DM Sans',sans-serif; transition:all .2s; }
+.add-btn:hover { border-color:var(--lavender-md); color:var(--plum); background:var(--lavender-lt); }
+
+.free-box,.over-box,.zero-box { margin-top:10px; padding:8px 12px; border-radius:10px; font-size:12px; display:flex; justify-content:space-between; align-items:center; }
+.free-box { background:var(--lavender-lt); border:1px dashed var(--lavender-md); }
+.free-box span:first-child { color:var(--ink-soft); }
+.free-box span:last-child { color:var(--plum); font-weight:600; font-family:'Shippori Mincho',serif; }
+.over-box { background:#fef2f2; border:1px dashed #fca5a5; }
+.over-box span:first-child { color:#991b1b; }
+.over-box span:last-child { color:#dc2626; font-weight:600; font-family:'Shippori Mincho',serif; }
+.zero-box { background:var(--sky-lt); border:1px dashed var(--sky-md); }
+.zero-box span { color:#1e40af; }
+.zero-box span:last-child { font-family:'Shippori Mincho',serif; font-weight:600; }
+[data-theme="dark"] .zero-box span { color:#93c5fd; }
+[data-theme="dark"] .over-box { background:#2d0a0a; border-color:#7f1d1d; }
+[data-theme="dark"] .over-box span:first-child { color:#fca5a5; }
+[data-theme="dark"] .over-box span:last-child  { color:#f87171; }
+
+/* ── History / Summary view ── */
+.history-view { display:none; }
+.history-view.show { display:block; }
+.planner-view { display:block; }
+.planner-view.hide { display:none; }
+
+.history-table-wrap { overflow-x:auto; border-radius:var(--radius); box-shadow:var(--shadow); }
+/* Let the history view overflow its parent so all 12 months fit on wide tables */
+.history-view.show { margin-left:calc(-50vw + 50%); margin-right:calc(-50vw + 50%); padding:0 1.5rem; }
+.history-table { width:100%; border-collapse:collapse; font-size:12px; background:var(--white); border-radius:var(--radius); overflow:hidden; min-width:700px; }
+.history-table th { padding:10px 14px; text-align:right; font-weight:500; color:var(--gray); font-size:11px; border-bottom:1px solid var(--border); white-space:nowrap; }
+.history-table th:first-child { text-align:left; }
+.history-table td { padding:8px 14px; text-align:right; border-bottom:1px solid var(--border); font-family:'Shippori Mincho',serif; color:var(--ink); }
+.history-table td:first-child { text-align:left; font-family:'DM Sans',sans-serif; font-size:11px; color:var(--gray); }
+.history-table tr:last-child td { border-bottom:none; font-weight:600; color:var(--lavender-md); }
+.history-table .cat-hdr { background:var(--mist); }
+.history-table .cat-hdr td { font-family:'Shippori Mincho',serif; font-size:12px; font-weight:600; color:var(--ink); padding:10px 14px 4px; border-bottom:none; }
+.history-table .accum-row td { color:var(--lavender-md); font-size:11px; font-style:italic; }
+.month-active-col { background:rgba(167,139,250,0.07); }
+
+/* Edit categories modal */
+.modal-overlay { position:fixed; inset:0; z-index:200; background:rgba(15,10,30,0.55); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .25s; }
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal { background:var(--white); border:1px solid var(--border); border-radius:24px; padding:28px 24px; width:100%; max-width:440px; box-shadow:0 24px 60px rgba(0,0,0,0.25); max-height:90vh; overflow-y:auto; }
+.modal-title { font-family:'Shippori Mincho',serif; font-size:18px; font-weight:600; color:var(--ink); margin-bottom:6px; }
+.modal-sub { font-size:11px; color:var(--gray); margin-bottom:20px; }
+.cat-row { display:flex; align-items:center; gap:8px; margin-bottom:10px; padding:10px 12px; background:var(--mist); border-radius:12px; border:1px solid var(--border); }
+.cat-color-btn { width:22px; height:22px; border-radius:50%; border:2px solid rgba(255,255,255,0.6); cursor:pointer; flex-shrink:0; transition:transform .15s; }
+.cat-color-btn:hover { transform:scale(1.15); }
+.cat-name-input { flex:1; border:none; background:transparent; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:var(--ink); outline:none; min-width:0; }
+.cat-del-btn { background:none; border:none; cursor:pointer; color:rgba(167,139,250,0.4); font-size:16px; padding:0 2px; flex-shrink:0; transition:color .2s; }
+.cat-del-btn:hover { color:#dc2626; }
+.color-picker-row { display:none; flex-wrap:wrap; gap:6px; padding:8px 0 4px 30px; }
+.color-picker-row.open { display:flex; }
+.color-swatch { width:20px; height:20px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:transform .15s,border-color .15s; }
+.color-swatch:hover { transform:scale(1.2); }
+.color-swatch.selected { border-color:var(--ink); }
+.add-cat-btn { width:100%; background:none; border:1.5px dashed rgba(167,139,250,0.4); border-radius:10px; cursor:pointer; color:var(--lavender-md); font-size:12px; padding:8px; margin-top:4px; font-family:'DM Sans',sans-serif; transition:all .2s; }
+.add-cat-btn:hover { border-color:var(--lavender-md); background:var(--lavender-lt); }
+.modal-actions { display:flex; gap:8px; margin-top:20px; }
+.modal-done-btn { flex:1; background:var(--lavender-md); color:#fff; border:none; border-radius:10px; padding:10px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; cursor:pointer; transition:background .2s; }
+.modal-done-btn:hover { background:var(--plum); }
+.modal-cancel-btn { background:none; border:1px solid var(--border); border-radius:10px; padding:10px 16px; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--gray); cursor:pointer; transition:all .2s; }
+.modal-cancel-btn:hover { border-color:var(--lavender-md); color:var(--ink); }
+
+.edit-cats-btn { background:none; border:1px solid var(--border); border-radius:50px; padding:5px 12px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:11px; color:var(--gray); font-weight:500; transition:all .2s; }
+.edit-cats-btn:hover { border-color:var(--lavender-md); color:var(--lavender-md); }
+
+.top-actions { position:fixed; top:1.2rem; right:1.2rem; z-index:100; display:flex; align-items:center; gap:6px; }
+.theme-toggle { background:var(--white); border:1px solid var(--border); border-radius:50px; padding:6px 14px; box-shadow:var(--shadow); cursor:pointer; font-family:'DM Sans',sans-serif; font-size:12px; color:var(--gray); font-weight:500; display:flex; align-items:center; gap:6px; transition:all .2s; }
+.theme-toggle:hover { color:var(--ink); border-color:var(--lavender-md); }
+.save-pdf-btn { background:var(--lavender-md); border:none; border-radius:50px; padding:6px 14px; box-shadow:var(--shadow); cursor:pointer; font-family:'DM Sans',sans-serif; font-size:12px; color:#fff; font-weight:500; display:flex; align-items:center; gap:6px; transition:all .2s; }
+.save-pdf-btn:hover { background:var(--plum); }
+
+/* ── Print / PDF ── */
+.print-header { display:none; }
+
+@media print {
+  @page { size: A4 portrait; margin: 12mm 13mm 12mm 13mm; }
+
+  #root { --lavender:#c4b5f4; --lavender-lt:#ede9fe; --lavender-md:#a78bfa;
+          --periwinkle:#818cf8; --plum:#7c3aed; --mist:#f5f3ff; --ink:#2e1065;
+          --ink-soft:#4c1d95; --gray:#6b7280; --white:#ffffff;
+          --border:rgba(167,139,250,0.3); --shadow:none; --radius:10px; --radius-sm:6px; }
+
+  body { background:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+
+  .theme-toggle, .save-pdf-btn, .blob1, .blob2, .bf-strip,
+  .view-tabs, .month-bar, .pct-warn, .add-btn, .del-btn,
+  .edit-cats-btn, .save-dot, #notice { display:none !important; }
+
+  html, body { overflow:visible; height:auto; }
+  .wrap { max-width:100%; padding:0; }
+
+  .header-title, .header-sub { display:none !important; }
+  .print-header { display:flex !important; align-items:baseline;
+    justify-content:space-between; border-bottom:2px solid #a78bfa;
+    padding-bottom:7px; margin-bottom:12px; }
+  .print-header-title { font-family:'Shippori Mincho',serif; font-size:19px;
+    font-weight:600; color:#2e1065; }
+  .print-header-title span { color:#a78bfa; }
+  .print-header-meta { font-size:10px; color:#6b7280; text-align:right; line-height:1.7; }
+
+  .income-card { border:1px solid #e0d7f8; box-shadow:none; padding:6px 12px;
+    margin-bottom:9px; border-radius:8px; width:auto; display:inline-flex; }
+  .income-input { font-size:16px; width:110px; }
+  .income-label { font-size:12px; }
+
+  .pct-row { margin-bottom:9px; gap:5px; }
+  .pct-pill { padding:3px 9px; box-shadow:none; border:1px solid #e0d7f8; }
+  .pct-input { font-size:12px; }
+  .pct-name { font-size:11px; }
+
+  .summary-grid { grid-template-columns:repeat(4,1fr); gap:7px; margin-bottom:9px; }
+  .summary-card { box-shadow:none; border:1px solid #e0d7f8; border-radius:8px; }
+  .sc-accent { height:3px; margin-bottom:7px; }
+  .sc-body { padding:0 9px 9px; }
+  .sc-amount { font-size:15px; }
+  .sc-name { font-size:10px; }
+  .sc-status { font-size:10px; }
+
+  .note-row { margin-bottom:9px; }
+  .note-input { border:1px solid #e0d7f8; box-shadow:none; font-size:11px;
+    padding:5px 9px; border-radius:6px; }
+
+  .breakdown-grid { grid-template-columns:1fr 1fr; gap:9px; }
+  .breakdown-card { box-shadow:none; border:1px solid #e0d7f8; border-radius:9px;
+    padding:11px; break-inside:avoid; page-break-inside:avoid; }
+  .bc-header { padding-bottom:7px; margin-bottom:9px; }
+  .bc-name { font-size:12px; }
+  .bc-budget { font-size:10px; }
+
+  .exp-row { margin-bottom:5px; }
+  .exp-top { gap:4px; }
+  .exp-label { font-size:11px; }
+  .exp-rm { font-size:9px; }
+  .exp-amt { font-size:11px; padding:1px 5px; background:#f5f3ff;
+    border:none; border-radius:3px; width:70px; }
+  .bar-bg { height:2px; margin-top:2px; }
+  .bar-fill { height:2px; }
+  .exp-accum { font-size:9px; }
+
+  .free-box, .over-box, .zero-box { padding:4px 8px; margin-top:5px;
+    border-radius:5px; font-size:10px; }
+
+  /* Planner mode (default) */
+  body:not([data-print="history"]) .planner-view { display:block !important; }
+  body:not([data-print="history"]) .planner-view.hide { display:block !important; }
+  body:not([data-print="history"]) .history-view { display:none !important; }
+
+  /* History / Year Summary mode */
+  body[data-print="history"] .planner-view,
+  body[data-print="history"] .planner-view.hide { display:none !important; }
+  body[data-print="history"] .history-view { display:block !important; }
+  body[data-print="history"] .history-view.show { display:block !important; }
+
+  /* Year summary table print styles */
+  .history-table-wrap { overflow:visible; box-shadow:none; border-radius:0; }
+  .history-table { font-size:8.5px; width:100%; border-collapse:collapse; table-layout:auto; }
+  .history-table th {
+    padding:4px 5px; font-size:8px; font-weight:600; color:#4c1d95;
+    background:#ede9fe; border:1px solid #c4b5f4; white-space:nowrap;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  .history-table th:first-child { text-align:left; min-width:90px; max-width:110px; }
+  .history-table td {
+    padding:3px 5px; border:1px solid #e5e7eb;
+    font-family:'Shippori Mincho',serif; font-size:8.5px; color:#2e1065;
+    white-space:nowrap;
+  }
+  .history-table td:first-child {
+    font-family:'DM Sans',sans-serif; font-size:8px; color:#6b7280;
+    text-align:left; white-space:normal; max-width:110px;
+  }
+  .history-table .cat-hdr td {
+    font-family:'Shippori Mincho',serif; font-size:8.5px; font-weight:600;
+    background:#f5f3ff; padding:4px 5px; border:1px solid #c4b5f4;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  .history-table tr:last-child td { border-bottom:1px solid #e5e7eb; font-weight:600; }
+  /* Remove highlight in print - strip via JS before printing */
+  .month-active-col { background:transparent !important; }
+
+  /* Footnote under table */
+  #history-content > div:last-child { display:none; }
+}
+</style>
+</head>
+<body>
+<div class="top-actions">
+  <button class="save-pdf-btn" onclick="printMonth()">⬇ Save PDF</button>
+  <button class="theme-toggle" onclick="toggleTheme()">
+    <span id="toggle-icon">🌙</span>
+    <span id="toggle-label">Dark</span>
+  </button>
+</div>
+
+<!-- Category edit modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">Edit Categories</div>
+    <div class="modal-sub">Rename, recolour, add or remove categories. Changes apply when you click Save.</div>
+    <div id="modal-cat-list"></div>
+    <button class="add-cat-btn" id="modal-add-cat">+ add category</button>
+    <div class="modal-actions">
+      <button class="modal-cancel-btn" id="modal-cancel">Cancel</button>
+      <button class="modal-done-btn" id="modal-save">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<div class="blob1"></div>
+<div class="blob2"></div>
+<div class="wrap">
+
+  <!-- Print-only header (hidden on screen, shown in PDF) -->
+  <div class="print-header" id="print-header">
+    <div class="print-header-title">My Budget <span>Planner</span></div>
+    <div class="print-header-meta" id="print-header-meta"></div>
+  </div>
+
+  <!-- Butterflies -->
+  <div class="bf-strip">
+    <svg width="28" height="22" viewBox="0 0 44 34" fill="none">
+      <ellipse cx="11" cy="10" rx="10" ry="7" fill="#c4b5f4" opacity=".9" transform="rotate(20 11 10)"/>
+      <ellipse cx="11" cy="23" rx="7" ry="5" fill="#a78bfa" opacity=".8" transform="rotate(-15 11 23)"/>
+      <ellipse cx="33" cy="10" rx="10" ry="7" fill="#c4b5f4" opacity=".9" transform="rotate(-20 33 10)"/>
+      <ellipse cx="33" cy="23" rx="7" ry="5" fill="#a78bfa" opacity=".8" transform="rotate(15 33 23)"/>
+      <line x1="22" y1="5" x2="22" y2="30" stroke="#7c3aed" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M22 5 Q17 0 14 2" stroke="#7c3aed" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <circle cx="14" cy="2" r="1" fill="#7c3aed" opacity=".7"/>
+      <path d="M22 5 Q27 0 30 2" stroke="#7c3aed" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <circle cx="30" cy="2" r="1" fill="#7c3aed" opacity=".7"/>
+    </svg>
+    <svg width="20" height="17" viewBox="0 0 44 34" fill="none" style="opacity:.65">
+      <ellipse cx="11" cy="10" rx="10" ry="7" fill="#93c5fd" opacity=".9" transform="rotate(20 11 10)"/>
+      <ellipse cx="11" cy="23" rx="7" ry="5" fill="#60a5fa" opacity=".8" transform="rotate(-15 11 23)"/>
+      <ellipse cx="33" cy="10" rx="10" ry="7" fill="#93c5fd" opacity=".9" transform="rotate(-20 33 10)"/>
+      <ellipse cx="33" cy="23" rx="7" ry="5" fill="#60a5fa" opacity=".8" transform="rotate(15 33 23)"/>
+      <line x1="22" y1="5" x2="22" y2="30" stroke="#2563eb" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M22 5 Q17 0 14 2" stroke="#2563eb" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <circle cx="14" cy="2" r="1" fill="#2563eb" opacity=".7"/>
+      <path d="M22 5 Q27 0 30 2" stroke="#2563eb" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <circle cx="30" cy="2" r="1" fill="#2563eb" opacity=".7"/>
+    </svg>
+    <svg width="16" height="13" viewBox="0 0 44 34" fill="none" style="opacity:.45">
+      <ellipse cx="11" cy="10" rx="10" ry="7" fill="#e9d5ff" opacity=".9" transform="rotate(20 11 10)"/>
+      <ellipse cx="11" cy="23" rx="7" ry="5" fill="#d8b4fe" opacity=".8" transform="rotate(-15 11 23)"/>
+      <ellipse cx="33" cy="10" rx="10" ry="7" fill="#e9d5ff" opacity=".9" transform="rotate(-20 33 10)"/>
+      <ellipse cx="33" cy="23" rx="7" ry="5" fill="#d8b4fe" opacity=".8" transform="rotate(15 33 23)"/>
+      <line x1="22" y1="5" x2="22" y2="30" stroke="#9333ea" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M22 5 Q17 0 14 2" stroke="#9333ea" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <circle cx="14" cy="2" r="1" fill="#9333ea" opacity=".7"/>
+      <path d="M22 5 Q27 0 30 2" stroke="#9333ea" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <circle cx="30" cy="2" r="1" fill="#9333ea" opacity=".7"/>
+    </svg>
+  </div>
+
+  <div class="header-title">My Budget <span>Planner</span> <span class="save-dot" id="savedot"></span></div>
+  <div class="header-sub">All changes saved automatically in this browser</div>
+
+  <!-- View tabs -->
+  <div class="view-tabs">
+    <button class="view-tab active" id="tab-planner" onclick="switchView('planner')">Planner</button>
+    <button class="view-tab" id="tab-history" onclick="switchView('history')">Year Summary</button>
+  </div>
+
+  <!-- Month bar -->
+  <div class="month-bar" id="month-bar"></div>
+
+  <!-- ── PLANNER VIEW ── -->
+  <div class="planner-view" id="planner-view">
+    <div class="income-card">
+      <span class="income-label">Monthly Income</span>
+      <span class="income-rm">RM</span>
+      <input type="number" class="income-input" id="income" min="0" step="100" placeholder="0" />
+    </div>
+
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+      <div class="section-label" style="margin-bottom:0;">Category Split</div>
+      <button class="edit-cats-btn" id="edit-cats-btn">✎ Edit Categories</button>
+    </div>
+    <div id="cat-pcts" class="pct-row"></div>
+    <div class="pct-warn" id="pct-warn">Percentages must add up to 100%</div>
+
+    <div class="summary-grid" id="main-cards"></div>
+
+
+    <div class="note-row">
+      <textarea class="note-input" id="month-note" rows="2" placeholder="Notes for this month… (e.g. Raya spending, bought laptop)"></textarea>
+    </div>
+
+    <div class="breakdown-grid" id="breakdown"></div>
+  </div>
+
+  <!-- ── HISTORY VIEW ── -->
+  <div class="history-view" id="history-view">
+    <div id="history-content"></div>
+  </div>
+
+</div>
+
+<script>
+// ── Palette ───────────────────────────────────────────────────────────────────
+const PALETTE = [
+  { bar:"#818cf8", bg:"#ede9fe" },
+  { bar:"#a78bfa", bg:"#ede9fe" },
+  { bar:"#0ea5e9", bg:"#e0f2fe" },
+  { bar:"#14b8a6", bg:"#ccfbf1" },
+  { bar:"#6366f1", bg:"#e0e7ff" },
+  { bar:"#f59e0b", bg:"#fef3c7" },
+  { bar:"#10b981", bg:"#d1fae5" },
+  { bar:"#8b5cf6", bg:"#f5f3ff" },
+];
+
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+// ── Default categories template ───────────────────────────────────────────────
+const DEFAULT_CATS = () => ([
+  { id:"needs",         name:"Needs",         color:PALETTE[0], pct:50, expenses:[
+    { label:"Rent / mortgage",  amt:0 },
+    { label:"Groceries",        amt:0 },
+    { label:"Utilities",        amt:0 },
+    { label:"Phone bill",       amt:0 },
+    { label:"Transport / fuel", amt:0 },
+    { label:"Insurance",        amt:0 },
+  ]},
+  { id:"savings",       name:"Savings",       color:PALETTE[1], pct:20, expenses:[
+    { label:"Emergency fund",    amt:0 },
+    { label:"Retirement savings",amt:0 },
+    { label:"Investment",        amt:0 },
+    { label:"Future goals",      amt:0 },
+  ]},
+  { id:"wants",         name:"Wants",         color:PALETTE[2], pct:20, expenses:[
+    { label:"Gym / fitness",  amt:0 },
+    { label:"Dining out",     amt:0 },
+    { label:"Shopping",       amt:0 },
+    { label:"Travel fund",    amt:0 },
+  ]},
+  { id:"entertainment", name:"Entertainment", color:PALETTE[3], pct:10, expenses:[
+    { label:"Streaming services", amt:0 },
+    { label:"Music",              amt:0 },
+    { label:"Hobbies",            amt:0 },
+  ]},
+]);
+
+// ── State shape ───────────────────────────────────────────────────────────────
+// S.months[mi] = { income, note, categories:[{id,name,color,pct,expenses:[{label,amt}]}] }
+// S.catTemplate = current category structure (names, colours, labels) for new months
+
+const SK = "budget_planner_v5";
+
+function blankMonth(template) {
+  return {
+    income: 0,
+    note: "",
+    categories: template.map(c => ({
+      ...c,
+      color: { ...c.color },
+      expenses: c.expenses.map(e => ({ label: e.label, amt: 0 })),
+    })),
+  };
+}
+
+function loadState() {
+  try {
+    const r = localStorage.getItem(SK);
+    if (r) {
+      const p = JSON.parse(r);
+      if (p.months) return p;
+    }
+  } catch(e) {}
+  // fresh start
+  const template = DEFAULT_CATS();
+  const curM = new Date().getMonth();
+  const months = Array.from({length:12}, (_,i) => blankMonth(template));
+  months[curM].income = 5000;
+  return { months, catTemplate: template };
+}
+
+let S = loadState();
+let curMonth = new Date().getMonth();
+let saveTimer;
+
+function curData() { return S.months[curMonth]; }
+
+function save() {
+  try {
+    localStorage.setItem(SK, JSON.stringify(S));
+    const d = document.getElementById("savedot");
+    d.classList.add("show");
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => d.classList.remove("show"), 1800);
+  } catch(e) {}
+  // Keep year summary in sync whenever data changes
+  if (document.getElementById("history-view").classList.contains("show")) {
+    renderHistory();
+  }
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const fmt    = n => "RM " + Math.abs(Number(n)||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,",");
+const fmtR   = n => "RM " + Math.round(Number(n)||0).toLocaleString();
+const sumExp = cat => cat.expenses.reduce((a,b) => a+(Number(b.amt)||0), 0);
+const totalPct = () => curData().categories.reduce((a,c) => a+(Number(c.pct)||0), 0);
+const budgetOf = cat => (Number(curData().income)||0) * (Number(cat.pct)||0) / 100;
+
+// Accumulated amount for a label across months up to (and including) curMonth
+function accumForLabel(catId, label) {
+  let total = 0;
+  for (let m = 0; m <= curMonth; m++) {
+    const cat = S.months[m].categories.find(c => c.id === catId);
+    if (!cat) continue;
+    const exp = cat.expenses.find(e => e.label === label);
+    if (exp) total += Number(exp.amt) || 0;
+  }
+  return total;
+}
+
+// ── Month bar ─────────────────────────────────────────────────────────────────
+function renderMonthBar() {
+  const bar = document.getElementById("month-bar");
+  const pills = MONTHS.map((m, i) => {
+    const hasData = S.months[i].income > 0 || S.months[i].note || S.months[i].categories.some(c => c.expenses.some(e => Number(e.amt) > 0));
+    return `<button class="month-tab ${i===curMonth?'active':''} ${hasData&&i!==curMonth?'has-data':''}"
+      onclick="switchMonth(${i})">${m}</button>`;
+  }).join("");
+
+  bar.innerHTML = pills + `
+    <div class="month-actions">
+      <button class="month-action-btn" onclick="copyLastMonth()" title="Copy previous month's amounts into this month">↩ Copy last month</button>
+      <button class="month-action-btn" onclick="clearAmounts()" title="Zero all expense amounts for this month" style="color:#dc2626;border-color:rgba(220,38,38,0.3);">✕ Clear amounts</button>
+    </div>`;
+}
+
+function switchMonth(m) {
+  curMonth = m;
+  renderMonthBar();
+  loadMonthIntoUI();
+  if (document.getElementById("planner-view").classList.contains("hide") === false) {
+    renderSummary();
+    renderBreakdown();
+  } else {
+    renderHistory();
+  }
+}
+
+function copyLastMonth() {
+  const prev = curMonth === 0 ? 11 : curMonth - 1;
+  const src  = S.months[prev];
+  const dst  = S.months[curMonth];
+  dst.income = src.income;
+  dst.categories = src.categories.map(c => ({
+    ...c,
+    color: { ...c.color },
+    expenses: c.expenses.map(e => ({ ...e })),
+  }));
+  save();
+  loadMonthIntoUI();
+  renderSummary();
+  // Clear cached month on all cards so renderBreakdown is forced to do a full rebuild,
+  // otherwise updateCardDynamic is used and input values are not refreshed.
+  document.querySelectorAll("#breakdown .breakdown-card").forEach(c => c.removeAttribute("data-month"));
+  renderBreakdown();
+}
+
+function clearAmounts() {
+  if (!confirm(`Clear all amounts for ${MONTHS[curMonth]}? Labels will be kept.`)) return;
+  curData().income = 0;
+  curData().categories.forEach(cat => {
+    cat.expenses.forEach(e => { e.amt = 0; });
+  });
+  save();
+  loadMonthIntoUI();
+  renderSummary();
+  document.querySelectorAll("#breakdown .breakdown-card").forEach(c => c.removeAttribute("data-month"));
+  renderBreakdown();
+}
+
+function loadMonthIntoUI() {
+  const d = curData();
+  document.getElementById("income").value = d.income || "";
+  document.getElementById("month-note").value = d.note || "";
+  buildPills();
+}
+
+// ── View switching ────────────────────────────────────────────────────────────
+function switchView(v) {
+  document.getElementById("planner-view").className = "planner-view" + (v==="planner" ? "" : " hide");
+  document.getElementById("history-view").className = "history-view"  + (v==="history" ? " show" : "");
+  document.getElementById("tab-planner").className  = "view-tab" + (v==="planner" ? " active" : "");
+  document.getElementById("tab-history").className  = "view-tab" + (v==="history" ? " active" : "");
+  if (v === "history") renderHistory();
+}
+
+// ── Pill + summary ────────────────────────────────────────────────────────────
+function buildPills() {
+  const el = document.getElementById("cat-pcts");
+  const cats = curData().categories;
+  el.innerHTML = cats.map((cat, i) => `
+    <div class="pct-pill">
+      <span class="pct-dot" style="background:${cat.color.bar};"></span>
+      <span class="pct-name">${cat.name}</span>
+      <input type="number" class="pct-input" id="pct-${cat.id}" min="0" max="100" step="1" value="${cat.pct}" />
+      <span class="pct-sym">%</span>
+    </div>${i < cats.length-1 ? '<span class="pct-plus">+</span>' : ''}
+  `).join("");
+
+  cats.forEach(cat => {
+    const el = document.getElementById(`pct-${cat.id}`);
+    if (!el) return;
+    el.addEventListener("input", function() {
+      cat.pct = Number(this.value)||0;
+      save();
+      renderSummary();
+      renderBreakdown();
+    });
+  });
+}
+
+function renderSummary() {
+  const income = Number(curData().income)||0;
+  const total  = totalPct();
+  document.getElementById("pct-warn").style.display = total !== 100 ? "block" : "none";
+
+
+
+  document.getElementById("main-cards").innerHTML = curData().categories.map(cat => {
+    const b   = budgetOf(cat);
+    const rem = b - sumExp(cat);
+    const ov  = rem < 0;
+    return `<div class="summary-card">
+      <div class="sc-accent" style="background:${cat.color.bar};"></div>
+      <div class="sc-body">
+        <div class="sc-top">
+          <span class="sc-dot" style="background:${cat.color.bar};"></span>
+          <span class="sc-name">${cat.name}</span>
+          <span class="sc-pct">${cat.pct}%</span>
+        </div>
+        <div class="sc-amount">${fmtR(b)}</div>
+        <div class="sc-status" style="color:${ov?'#dc2626':'#7c3aed'};">
+          ${ov ? '▲ Over by '+fmt(rem) : '▼ '+fmt(rem)+' free'}
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+// ── Breakdown (focus-safe render) ─────────────────────────────────────────────
+function renderBreakdown() {
+  const container = document.getElementById("breakdown");
+  Array.from(container.children).forEach(el => {
+    const id = el.id.replace("card-","");
+    if (!curData().categories.find(c => c.id === id)) el.remove();
+  });
+  curData().categories.forEach(cat => {
+    const cardId = `card-${cat.id}`;
+    let card = document.getElementById(cardId);
+    const b  = budgetOf(cat);
+    if (!card) {
+      card = document.createElement("div");
+      card.className = "breakdown-card";
+      card.id = cardId;
+      container.appendChild(card);
+    }
+    const existingRows = card.querySelectorAll(".exp-row").length;
+    // Always rebuild if expense count changed OR if the card's data-month doesn't match curMonth
+    // (prevents stale input values from a previously viewed month being kept in the DOM)
+    if (existingRows !== cat.expenses.length || card.dataset.month !== String(curMonth)) {
+      card.dataset.month = curMonth;
+      buildCardHTML(card, cat, b);
+    } else {
+      updateCardDynamic(card, cat, b);
+    }
+  });
+}
+
+function buildCardHTML(card, cat, b) {
+  const rows = cat.expenses.map((s, i) => {
+    const bw    = b > 0 ? Math.min(100, Math.round((Number(s.amt)||0)/b*100)) : 0;
+    const accum = accumForLabel(cat.id, s.label);
+    return `<div class="exp-row" data-idx="${i}">
+      <div class="exp-top">
+        <input type="text" class="exp-label" value="${s.label}" placeholder="Item name" />
+        <span class="exp-rm">RM</span>
+        <input type="number" class="exp-amt" value="${(Number(s.amt)||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00" />
+        <button class="del-btn" data-i="${i}">×</button>
+      </div>
+      <div class="bar-bg" style="background:${cat.color.bg};">
+        <div class="bar-fill" data-bar style="background:${cat.color.bar};width:${bw}%;"></div>
+      </div>
+      ${accum > 0 ? `<div class="exp-accum">Total Jan–${MONTHS[curMonth]}: ${fmt(accum)}</div>` : ""}
+    </div>`;
+  }).join("");
+
+  const freeAmt = b - sumExp(cat);
+  card.innerHTML = `
+    <div class="bc-header">
+      <span class="bc-dot" style="background:${cat.color.bar};"></span>
+      <span class="bc-name">${cat.name}</span>
+      <span class="bc-budget" id="bc-budget-${cat.id}">${fmtR(b)} / mo</span>
+    </div>
+    <div id="rows-${cat.id}">${rows}</div>
+    <button class="add-btn" data-add="${cat.id}">+ add item</button>
+    <div id="freebox-${cat.id}">${freeBox(freeAmt)}</div>
+  `;
+  attachListeners(card, cat);
+}
+
+function updateCardDynamic(card, cat, b) {
+  const budgetEl = card.querySelector(`#bc-budget-${cat.id}`);
+  if (budgetEl) budgetEl.textContent = `${fmtR(b)} / mo`;
+  const nameEl = card.querySelector(".bc-name");
+  if (nameEl) nameEl.textContent = cat.name;
+  const dotEl = card.querySelector(".bc-dot");
+  if (dotEl) dotEl.style.background = cat.color.bar;
+
+  card.querySelectorAll(".exp-row").forEach((row, i) => {
+    const s = cat.expenses[i];
+    if (!s) return;
+    const bw = b > 0 ? Math.min(100, Math.round((Number(s.amt)||0)/b*100)) : 0;
+    const barEl = row.querySelector("[data-bar]");
+    if (barEl) { barEl.style.width = bw+"%"; barEl.style.background = cat.color.bar; }
+    const bgEl = row.querySelector(".bar-bg");
+    if (bgEl) bgEl.style.background = cat.color.bg;
+    // update accum text
+    const accumEl = row.querySelector(".exp-accum");
+    const accum = accumForLabel(cat.id, s.label);
+    if (accum > 0) {
+      if (accumEl) accumEl.textContent = `Total Jan–${MONTHS[curMonth]}: ${fmt(accum)}`;
+      else {
+        const div = document.createElement("div");
+        div.className = "exp-accum";
+        div.textContent = `Total Jan–${MONTHS[curMonth]}: ${fmt(accum)}`;
+        row.appendChild(div);
+      }
+    } else if (accumEl) accumEl.remove();
+  });
+
+  const fbEl = card.querySelector(`#freebox-${cat.id}`);
+  if (fbEl) fbEl.innerHTML = freeBox(b - sumExp(cat));
+}
+
+function freeBox(amt) {
+  if (amt > 0.005)  return `<div class="free-box"><span>Free to allocate</span><span>${fmt(amt)}</span></div>`;
+  if (amt < -0.005) return `<div class="over-box"><span>Over budget</span><span>-${fmt(amt)}</span></div>`;
+  return `<div class="zero-box"><span>Fully allocated</span><span>${fmt(0)}</span></div>`;
+}
+
+function attachListeners(card, cat) {
+  card.querySelectorAll(".exp-label").forEach((inp, i) => {
+    inp.addEventListener("input", function() {
+      cat.expenses[i].label = this.value;
+      save();
+    });
+  });
+  card.querySelectorAll(".exp-amt").forEach((inp, i) => {
+    inp.addEventListener("input", function() {
+      cat.expenses[i].amt = Number(this.value)||0;
+      save();
+      updateCardDynamic(card, cat, budgetOf(cat));
+      renderSummary();
+    });
+    inp.addEventListener("blur", function() {
+      const v = Number(this.value)||0;
+      this.value = v.toFixed(2);
+    });
+  });
+  card.querySelectorAll(".del-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+      cat.expenses.splice(parseInt(this.dataset.i), 1);
+      save();
+      buildCardHTML(card, cat, budgetOf(cat));
+      renderSummary();
+    });
+  });
+  const addBtn = card.querySelector("[data-add]");
+  if (addBtn) addBtn.addEventListener("click", function() {
+    cat.expenses.push({ label:"New item", amt:0 });
+    save();
+    buildCardHTML(card, cat, budgetOf(cat));
+    renderSummary();
+  });
+}
+
+// ── History / Year Summary ────────────────────────────────────────────────────
+function renderHistory() {
+  const el = document.getElementById("history-content");
+
+  // Collect all category IDs across all months
+  const allCatIds = [];
+  S.months.forEach(m => m.categories.forEach(c => {
+    if (!allCatIds.includes(c.id)) allCatIds.push(c.id);
+  }));
+
+  // Month headers — only show months that have any data
+  const activeMons = MONTHS.map((m,i) => {
+    const d = S.months[i];
+    return d.income > 0 || d.note || d.categories.some(c => c.expenses.some(e => Number(e.amt) > 0)) ? i : null;
+  }).filter(i => i !== null);
+
+  if (!activeMons.length) {
+    el.innerHTML = `<div class="notice">No data yet — start filling in your monthly expenses in the Planner tab.</div>`;
+    return;
+  }
+
+  const thCols = activeMons.map(i =>
+    `<th class="${i===curMonth?'month-active-col':''}">${MONTHS[i]}</th>`
+  ).join("") + "<th>Total</th>";
+
+  let rows = `<tr><th>Item</th>${thCols}</tr>`;
+
+  // Income row
+  const incVals = activeMons.map(i => `<td class="${i===curMonth?'month-active-col':''}">${S.months[i].income > 0 ? fmt(S.months[i].income) : '—'}</td>`).join("");
+  const incTotal = activeMons.reduce((a,i) => a + (Number(S.months[i].income)||0), 0);
+  rows += `<tr><td>💰 Income</td>${incVals}<td>${fmt(incTotal)}</td></tr>`;
+
+  // Per category
+  allCatIds.forEach(catId => {
+    // Find a representative cat (name, color)
+    let repCat = null;
+    for (const m of S.months) { repCat = m.categories.find(c => c.id === catId); if (repCat) break; }
+    if (!repCat) return;
+
+    rows += `<tr class="cat-hdr"><td colspan="${activeMons.length+2}" style="color:${repCat.color.bar}">● ${repCat.name}</td></tr>`;
+
+    // Collect all unique labels in this category
+    const allLabels = [];
+    S.months.forEach(m => {
+      const cat = m.categories.find(c => c.id === catId);
+      if (cat) cat.expenses.forEach(e => { if (!allLabels.includes(e.label)) allLabels.push(e.label); });
+    });
+
+    allLabels.forEach(label => {
+      const vals = activeMons.map(i => {
+        const cat = S.months[i].categories.find(c => c.id === catId);
+        const exp = cat?.expenses.find(e => e.label === label);
+        const v   = Number(exp?.amt)||0;
+        return `<td class="${i===curMonth?'month-active-col':''}">${v > 0 ? fmt(v) : '—'}</td>`;
+      }).join("");
+      const rowTotal = activeMons.reduce((a,i) => {
+        const cat = S.months[i].categories.find(c => c.id === catId);
+        return a + (Number(cat?.expenses.find(e => e.label===label)?.amt)||0);
+      }, 0);
+      rows += `<tr><td>${label}</td>${vals}<td>${rowTotal > 0 ? fmt(rowTotal) : '—'}</td></tr>`;
+    });
+
+    // Category subtotal
+    const subVals = activeMons.map(i => {
+      const cat = S.months[i].categories.find(c => c.id === catId);
+      const v   = cat ? cat.expenses.reduce((a,e) => a+(Number(e.amt)||0), 0) : 0;
+      return `<td class="${i===curMonth?'month-active-col':''}" style="color:${repCat.color.bar};font-weight:600;">${v > 0 ? fmt(v) : '—'}</td>`;
+    }).join("");
+    const subTotal = activeMons.reduce((a,i) => {
+      const cat = S.months[i].categories.find(c => c.id === catId);
+      return a + (cat ? cat.expenses.reduce((s,e) => s+(Number(e.amt)||0), 0) : 0);
+    }, 0);
+    rows += `<tr><td style="color:${repCat.color.bar};font-weight:600;">Subtotal</td>${subVals}<td style="color:${repCat.color.bar};font-weight:600;">${fmt(subTotal)}</td></tr>`;
+  });
+
+  // Notes
+  const hasNotes = activeMons.some(i => S.months[i].note);
+  if (hasNotes) {
+    rows += `<tr class="cat-hdr"><td colspan="${activeMons.length+2}">📝 Notes</td></tr>`;
+    const noteVals = activeMons.map(i =>
+      `<td class="${i===curMonth?'month-active-col':''}" style="font-family:'DM Sans',sans-serif;font-size:11px;color:var(--gray);">${S.months[i].note || '—'}</td>`
+    ).join("");
+    rows += `<tr><td>Monthly note</td>${noteVals}<td>—</td></tr>`;
+  }
+
+  el.innerHTML = `
+    <div class="history-table-wrap">
+      <table class="history-table"><tbody>${rows}</tbody></table>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--gray);">
+      Highlighted column = currently selected month (${MONTHS[curMonth]}). Only months with data are shown.
+    </div>`;
+}
+
+// ── Category edit modal ───────────────────────────────────────────────────────
+let draftCats = [];
+
+function openModal() {
+  draftCats = curData().categories.map(c => ({ ...c, color:{ ...c.color }, expenses:c.expenses }));
+  renderModalList();
+  document.getElementById("modal-overlay").classList.add("open");
+}
+function closeModal() { document.getElementById("modal-overlay").classList.remove("open"); }
+
+function renderModalList() {
+  const list = document.getElementById("modal-cat-list");
+  list.innerHTML = draftCats.map((cat, i) => `
+    <div class="cat-row" data-i="${i}">
+      <button class="cat-color-btn" data-i="${i}" style="background:${cat.color.bar};" title="Change colour"></button>
+      <input class="cat-name-input" data-i="${i}" value="${cat.name}" placeholder="Category name" maxlength="24" />
+      <button class="cat-del-btn" data-i="${i}" ${draftCats.length<=1?'disabled style="opacity:.3;cursor:default;"':''}>×</button>
+    </div>
+    <div class="color-picker-row" id="cprow-${i}">
+      ${PALETTE.map((p,pi) => `<div class="color-swatch ${p.bar===cat.color.bar?'selected':''}" style="background:${p.bar};" data-ci="${i}" data-pi="${pi}"></div>`).join("")}
+    </div>
+  `).join("");
+
+  list.querySelectorAll(".cat-name-input").forEach(inp => {
+    inp.addEventListener("input", function() { draftCats[+this.dataset.i].name = this.value; });
+  });
+  list.querySelectorAll(".cat-color-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+      const i = +this.dataset.i;
+      const row = document.getElementById(`cprow-${i}`);
+      row.classList.toggle("open");
+      list.querySelectorAll(".color-picker-row").forEach((r,ri) => { if(ri!==i) r.classList.remove("open"); });
+    });
+  });
+  list.querySelectorAll(".color-swatch").forEach(sw => {
+    sw.addEventListener("click", function() {
+      draftCats[+this.dataset.ci].color = { ...PALETTE[+this.dataset.pi] };
+      renderModalList();
+    });
+  });
+  list.querySelectorAll(".cat-del-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+      if (draftCats.length <= 1) return;
+      draftCats.splice(+this.dataset.i, 1);
+      renderModalList();
+    });
+  });
+}
+
+function saveModal() {
+  const valid = draftCats.filter(c => c.name.trim());
+  if (!valid.length) return;
+  const existing = new Map(curData().categories.map(c => [c.id, c]));
+  curData().categories = valid.map((draft, i) => {
+    const old = existing.get(draft.id);
+    return {
+      id:       draft.id || `cat_${Date.now()}_${i}`,
+      name:     draft.name.trim(),
+      color:    draft.color,
+      pct:      old ? old.pct : Math.floor(100/valid.length),
+      expenses: old ? old.expenses : [],
+    };
+  });
+  const sum = curData().categories.reduce((a,c) => a+c.pct, 0);
+  if (sum !== 100 && curData().categories.length)
+    curData().categories[curData().categories.length-1].pct += 100-sum;
+  save();
+  closeModal();
+  buildPills();
+  renderSummary();
+  renderBreakdown();
+}
+
+document.getElementById("edit-cats-btn").addEventListener("click", openModal);
+document.getElementById("modal-cancel").addEventListener("click", closeModal);
+document.getElementById("modal-save").addEventListener("click", saveModal);
+document.getElementById("modal-overlay").addEventListener("click", function(e) { if(e.target===this) closeModal(); });
+document.getElementById("modal-add-cat").addEventListener("click", function() {
+  const used = draftCats.map(c => c.color.bar);
+  const next = PALETTE.find(p => !used.includes(p.bar)) || PALETTE[draftCats.length % PALETTE.length];
+  draftCats.push({ id:`cat_${Date.now()}`, name:"New category", color:next, pct:0, expenses:[] });
+  renderModalList();
+});
+
+// ── Income input ──────────────────────────────────────────────────────────────
+document.getElementById("income").addEventListener("input", function() {
+  curData().income = Number(this.value)||0;
+  save();
+  renderSummary();
+  curData().categories.forEach(cat => {
+    const c = document.getElementById(`card-${cat.id}`);
+    if (c) updateCardDynamic(c, cat, budgetOf(cat));
+  });
+});
+
+// ── Note input ────────────────────────────────────────────────────────────────
+document.getElementById("month-note").addEventListener("input", function() {
+  curData().note = this.value;
+  save();
+});
+
+// ── Dark mode ─────────────────────────────────────────────────────────────────
+function applyTheme(dark) {
+  document.getElementById("root").setAttribute("data-theme", dark?"dark":"light");
+  document.getElementById("toggle-icon").textContent  = dark ? "☀️" : "🌙";
+  document.getElementById("toggle-label").textContent = dark ? "Light" : "Dark";
+}
+function toggleTheme() {
+  const isDark = document.getElementById("root").getAttribute("data-theme") === "dark";
+  localStorage.setItem("theme", !isDark ? "dark" : "light");
+  applyTheme(!isDark);
+}
+applyTheme(localStorage.getItem("theme") === "dark");
+
+// ── Print / Save PDF ──────────────────────────────────────────────────────────
+function printMonth() {
+  const isHistory = document.getElementById("history-view").classList.contains("show");
+
+  // Inject a temporary <style> to set @page orientation per view
+  const pageStyle = document.createElement("style");
+  pageStyle.id = "print-page-override";
+
+  if (isHistory) {
+    pageStyle.textContent = '@page { size: A4 landscape; margin: 10mm 10mm 10mm 10mm; }';
+
+    const activeMons = MONTHS.map((m,i) => {
+      const d = S.months[i];
+      return d.income > 0 || d.note || d.categories.some(c => c.expenses.some(e => Number(e.amt) > 0)) ? i : null;
+    }).filter(i => i !== null);
+    const totalIncome = activeMons.reduce((a,i) => a + (Number(S.months[i].income)||0), 0);
+    const totalSpent  = activeMons.reduce((a,i) => {
+      return a + S.months[i].categories.reduce((b,c) => b + c.expenses.reduce((s,e) => s+(Number(e.amt)||0),0),0);
+    }, 0);
+    document.getElementById("print-header-meta").innerHTML =
+      `<strong>Year Summary ${new Date().getFullYear()}</strong><br>` +
+      `Total income: <strong>RM ${totalIncome.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</strong> &middot; ` +
+      `Total spent: <strong>RM ${totalSpent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</strong>`;
+    document.body.setAttribute("data-print", "history");
+  } else {
+    pageStyle.textContent = '@page { size: A4 portrait; margin: 12mm 13mm 12mm 13mm; }';
+
+    const d = curData();
+    const income = Number(d.income) || 0;
+    const totalSpent = d.categories.reduce((a,c) => a + c.expenses.reduce((b,e) => b+(Number(e.amt)||0),0), 0);
+    document.getElementById("print-header-meta").innerHTML =
+      `<strong>${MONTHS[curMonth]} ${new Date().getFullYear()}</strong><br>` +
+      `Income: <strong>RM ${income.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</strong> &middot; ` +
+      `Spent: <strong>RM ${totalSpent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</strong>`;
+    document.body.setAttribute("data-print", "planner");
+  }
+
+  document.head.appendChild(pageStyle);
+  // Strip highlight class before printing so all header/cells look uniform
+  const highlighted = document.querySelectorAll(".month-active-col");
+  highlighted.forEach(el => el.classList.remove("month-active-col"));
+  window.print();
+  highlighted.forEach(el => el.classList.add("month-active-col"));
+  document.body.removeAttribute("data-print");
+  document.getElementById("print-page-override").remove();
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+renderMonthBar();
+loadMonthIntoUI();
+renderSummary();
+renderBreakdown();
+</script>
+</body>
+</html>
