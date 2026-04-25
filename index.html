@@ -139,8 +139,11 @@ body { font-family:'DM Sans',sans-serif; background:var(--mist); color:var(--ink
 }
 .pct-sym { font-size:11px; color:var(--lavender-md); }
 .pct-plus { color:var(--lavender); font-size:16px; }
-.pct-warn { font-size:12px; color:#dc2626; margin-top:4px; margin-bottom:.8rem; display:none; }
-[data-theme="dark"] .pct-warn { color:#f87171; }
+.pct-warn { font-size:12px; margin-top:4px; margin-bottom:.8rem; display:none; }
+.pct-warn.over  { color:#dc2626; }
+.pct-warn.under { color:#7c3aed; }
+[data-theme="dark"] .pct-warn.over  { color:#f87171; }
+[data-theme="dark"] .pct-warn.under { color:#a78bfa; }
 
 /* Summary cards */
 .summary-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; margin-bottom:1.5rem; }
@@ -750,7 +753,21 @@ function buildPills() {
 function renderSummary() {
   const income = Number(curData().income)||0;
   const total  = totalPct();
-  document.getElementById("pct-warn").style.display = total !== 100 ? "block" : "none";
+  const warn = document.getElementById("pct-warn");
+  if (total === 100) {
+    warn.style.display = "none";
+    warn.className = "pct-warn";
+  } else {
+    const diff = Math.abs(100 - total);
+    warn.style.display = "block";
+    if (total > 100) {
+      warn.className = "pct-warn over";
+      warn.textContent = `Percentages must add up to 100% — ▲ ${diff}% over, reduce by ${diff}% to reach 100%`;
+    } else {
+      warn.className = "pct-warn under";
+      warn.textContent = `Percentages must add up to 100% — ▼ ${diff}% remaining, add ${diff}% more to reach 100%`;
+    }
+  }
 
 
 
@@ -1184,7 +1201,6 @@ renderMonthBar();
 loadMonthIntoUI();
 renderSummary();
 renderBreakdown();
-
 
 </script>
 </body>
