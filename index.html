@@ -324,6 +324,17 @@ body { font-family:'DM Sans',sans-serif; background:var(--mist); color:var(--ink
   .note-input { border:1px solid #e0d7f8; box-shadow:none; font-size:11px;
     padding:5px 9px; border-radius:6px; }
 
+  /* Force all inputs/textareas to light mode regardless of OS/browser dark mode */
+  input, textarea {
+    background:#ffffff !important;
+    color:#2e1065 !important;
+    -webkit-text-fill-color:#2e1065 !important;
+    color-scheme: light !important;
+  }
+  .exp-amt { background:#f5f3ff !important; color:#7c3aed !important; -webkit-text-fill-color:#7c3aed !important; }
+  .income-input { color:#7c3aed !important; -webkit-text-fill-color:#7c3aed !important; }
+  .pct-input { color:#7c3aed !important; -webkit-text-fill-color:#7c3aed !important; }
+
   .breakdown-grid { grid-template-columns:1fr 1fr; gap:9px; }
   .breakdown-card { box-shadow:none; border:1px solid #e0d7f8; border-radius:9px;
     padding:11px; break-inside:avoid; page-break-inside:avoid; }
@@ -1165,7 +1176,6 @@ renderMonthBar();
 loadMonthIntoUI();
 renderSummary();
 renderBreakdown();
-
 
 </script>
 </body>
