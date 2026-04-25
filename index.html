@@ -970,10 +970,10 @@ function renderHistory() {
 
     rows += `<tr class="cat-hdr"><td colspan="${activeMons.length+2}" style="color:${repCat.color.bar}">● ${repCat.name}</td></tr>`;
 
-    // Collect all unique labels in this category
+    // Collect all unique labels — only from active months so stale defaults don't bleed in
     const allLabels = [];
-    S.months.forEach(m => {
-      const cat = m.categories.find(c => c.id === catId);
+    activeMons.forEach(i => {
+      const cat = S.months[i].categories.find(c => c.id === catId);
       if (cat) cat.expenses.forEach(e => { if (!allLabels.includes(e.label)) allLabels.push(e.label); });
     });
 
