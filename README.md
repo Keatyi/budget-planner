@@ -8,33 +8,71 @@ A clean, minimal monthly budget planner that runs entirely in the browser — no
 
 ## ✨ Features
 
-### 📅 Monthly Planning
-- Switch between any month of the year using the month tabs
-- Set your monthly income and split it across custom categories by percentage
-- Track individual expenses within each category with live progress bars
-- Add a monthly note for context (e.g. *Raya spending, bought a laptop*)
+### 📅 Planner
+
+**Income Tracking**
+- Add **multiple income sources** (salary, part-time job, freelance, etc.)
+- **Rename** any income source by clicking the ✎ pencil icon
+- **Remove** extra sources with the ✕ button
+- Live **Total** updates as you type
+
+**Budget Categories**
+- Default categories: **Needs, Savings, Wants, Entertainment**
+- Fully customisable - **Add, rename, recolour, or remove** categories via the Edit Categories modal
+- Percentage split always kept visible so you can balance your budget at a glance
+- Each category shows budget allocation, amount spent, and remaining balance
+
+**Monthly Breakdown**
+- Switch between any month of the year using the month bar
+- Each category expands into individual expense line items
+- **Add or remove** expense items freely
+- Track individual expenses within each category with live progress bars showing spending vs. budget
+- Over-budget items highlighted in red
+- Add a monthly note for context (e.g. Raya spending, bought a laptop)
+
+---
+
+### 💰 Savings
+
+- Add **savings goals** with a custom name, yearly target amount, and a link to a specific savings line item in the Planner (e.g. "Emergency Fund")
+- Each goal card shows: **Target / Saved / Remaining / Progress %** with a progress bar
+- Progress updates **automatically** as you log savings amounts in the Planner — no manual input needed on the Savings page
+- Goals are **editable and deletable** at any time
+- 🎉 Completion state shown when a goal is reached, including surplus amount
+
+---
 
 ### 📊 Year Summary
-- See all your months side by side in a single table
-- Only months with data are shown — clean and uncluttered
-- Cumulative totals per expense item 
-- Automatically updates as you edit
 
-### 🗂️ Category Management
-- Comes with 4 default categories: Needs, Savings, Wants, Entertainment
-- Fully customisable — rename, recolour, add or remove categories
-- Percentage split always kept visible so you can balance your budget at a glance
+- A full **Jan–Dec table** showing all categories and line items side by side
+- Income totals (combined across all sources) shown per month
+- Only months with data are shown
+- Cumulative totals per expense item
+- Current month is highlighted for easy reference
+- Print the full year summary as a clean PDF
 
-### 🛠️ Utilities
-- **↩ Copy last month** — carry over last month's income and amounts as a starting point
-- **✕ Clear amounts** — zero out all income and expenses for the current month while keeping your labels
-- **⬇ Save PDF** — export the current month's planner or the year summary as a clean PDF
-- **🌙 Dark mode** — easy on the eyes, toggle anytime
+---
+
+## 🛠️ Utilities
 
 ### 💾 Data Persistence
-- Everything is saved automatically to your browser's `localStorage`
-- No internet connection required after the first load
+- Everything saves automatically to **localStorage** — no manual saving needed
+- A subtle dot indicator confirms when data is saved
 - Export to PDF as a backup in case your browser cache is cleared
+
+### ↩ Copy last month
+- Carry over last month's income and amounts as a starting point
+
+### ✕ Clear amounts
+- Zero out all income and expenses for the current month while keeping your labels
+
+### 📄 Save as PDF
+- Export the current month's planner, savings or the year summary as a clean PDF
+- The PDF is designed to fit cleanly on a single A4 page.
+
+### 🌙 Dark Mode
+- Toggle between light and dark themes
+- Preference is saved automatically
 
 ---
 
@@ -50,14 +88,9 @@ That's it.
 
 ---
 
-## 📄 Saving as PDF
+## 🗃️ Data & Privacy
 
-Click **⬇ Save PDF** in the top-right corner at any time.
-
-- From the **Planner** tab → exports the current month's budget breakdown
-- From the **Year Summary** tab → exports the full year table in landscape layout
-
-In the print dialog, select **Save as PDF** as the destination. The PDF is designed to fit cleanly on a single A4 page.
+All data is stored in your browser's `localStorage` — it never leaves your device. Clearing browser data will erase your budget history, so use the **Save as PDF** feature to keep permanent records.
 
 ---
 
@@ -65,12 +98,10 @@ In the print dialog, select **Save as PDF** as the destination. The PDF is desig
 
 | | |
 |---|---|
-| Framework | None — vanilla HTML, CSS, JavaScript |
-| Fonts | [Shippori Mincho](https://fonts.google.com/specimen/Shippori+Mincho) + [DM Sans](https://fonts.google.com/specimen/DM+Sans) via Google Fonts |
-| Storage | Browser `localStorage` |
-| Dependencies | None |
-
-The entire app is a single `index.html` file — no build step, no `node_modules`, no bundler.
+| **HTML / CSS / JS** | Single self-contained file, zero dependencies |
+| **Fonts** | Shippori Mincho + DM Sans via Google Fonts |
+| **Storage** | Browser `localStorage` |
+| **Compatibility** | All modern browsers (Chrome, Firefox, Safari, Edge) |
 
 ---
 
@@ -79,14 +110,8 @@ The entire app is a single `index.html` file — no build step, no `node_modules
 ```
 budget-planner/
 └── index.html   # The entire app
-└── README.md    # This file
+└── README.md    
 ```
-
----
-
-## 🔒 Privacy
-
-All your data stays in your browser. Nothing is sent to any server. The only external requests are to Google Fonts for typography — you can remove those too if you want to go fully offline by replacing the `<link>` tag with locally hosted fonts.
 
 ---
 
