@@ -105,20 +105,156 @@ body { font-family:'DM Sans',sans-serif; background:var(--mist); color:var(--ink
 .view-tab.active { background:var(--plum); border-color:var(--plum); color:#fff; }
 .view-tab:hover:not(.active) { border-color:var(--lavender-md); color:var(--lavender-md); }
 
+/* Income section */
+.income-section {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap;
+  width: 100%;
+}
+.income-section .income-card {
+  margin-bottom: 0;
+}
+.income-plus-sign {
+  font-size: 20px; color: var(--lavender-md); font-weight: 600; flex-shrink: 0;
+  align-self: center;
+}
+.income-equals-sign {
+  font-size: 22px; color: var(--lavender-md); font-weight: 700; flex-shrink: 0;
+  margin-left: auto; padding: 0 6px;
+}
+.income-total-card {
+  background: var(--white) !important;
+  border-color: var(--lavender-md) !important;
+}
+
+.income-label-wrap {
+  display: flex; align-items: center; gap: 4px;
+}
+.income-label-edit-btn {
+  background: none; border: none; cursor: pointer; font-size: 11px;
+  color: var(--lavender-md); padding: 1px 3px; border-radius: 3px;
+  opacity: 0.6; transition: opacity .15s;
+}
+.income-label-edit-btn:hover { opacity: 1; background: var(--lavender-lt); }
+.income-del-btn {
+  background: none; border: none; cursor: pointer; font-size: 10px;
+  color: #dc2626; padding: 1px 3px; border-radius: 3px;
+  opacity: 0.4; transition: opacity .15s;
+}
+.income-del-btn:hover { opacity: 1; background: #fef2f2; }
+.income-label-rename-input {
+  border: none; border-bottom: 1.5px solid var(--lavender-md); background: transparent;
+  font-size: 13px; color: var(--gray); font-weight: 500; font-family: 'DM Sans', sans-serif;
+  outline: none; width: 110px; padding: 0;
+}
+
+/* Savings goal card */
+.savings-goal-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 20px; box-shadow: var(--shadow);
+  margin-bottom: 1.5rem;
+}
+.sg-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.sg-icon { font-size: 18px; flex-shrink: 0; }
+.sg-title {
+  font-family: 'Shippori Mincho', serif; font-size: 15px; font-weight: 600;
+  color: var(--ink); flex: 1;
+}
+.sg-input-wrap { display: flex; align-items: center; gap: 4px; }
+.sg-input {
+  border: none; background: var(--mist); border-radius: var(--radius-sm);
+  font-family: 'Shippori Mincho', serif; font-size: 18px; font-weight: 600;
+  color: var(--plum); width: 140px; outline: none; padding: 4px 8px;
+  border: 1px solid var(--border); transition: border-color .15s;
+}
+.sg-input:focus { border-color: var(--lavender-md); background: var(--white); }
+.sg-bar-bg {
+  width: 100%; height: 8px; background: var(--lavender-lt); border-radius: 8px;
+  margin-bottom: 12px; overflow: hidden;
+}
+.sg-bar-fill {
+  height: 8px; border-radius: 8px; background: var(--lavender-md);
+  transition: width .5s cubic-bezier(.4,0,.2,1), background .3s;
+}
+.sg-body { min-height: 28px; }
+.sg-hint { font-size: 12px; color: var(--gray); }
+.sg-stats { display: flex; gap: 20px; flex-wrap: wrap; }
+.sg-stat { display: flex; flex-direction: column; gap: 2px; }
+.sg-stat-label { font-size: 11px; color: var(--gray); }
+.sg-stat-val { font-family: 'Shippori Mincho', serif; font-size: 16px; font-weight: 600; }
+
+/* ── Savings view ── */
+.savings-view { display:block; }
+.savings-view.hide { display:none; }
+.sv-header { margin-bottom:20px; }
+.sv-title-row { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:16px; }
+.sv-overall { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:16px 20px; box-shadow:var(--shadow); }
+.sv-overall-stats { display:flex; gap:24px; flex-wrap:wrap; margin-bottom:12px; }
+.sv-stat { display:flex; flex-direction:column; gap:2px; }
+.sv-stat-label { font-size:11px; color:var(--gray); }
+.sv-stat-val { font-family:'Shippori Mincho',serif; font-size:16px; font-weight:600; color:var(--ink); }
+.sv-bar-bg { width:100%; height:8px; background:var(--lavender-lt); border-radius:8px; overflow:hidden; }
+.sv-bar-fill { height:8px; border-radius:8px; transition:width .5s cubic-bezier(.4,0,.2,1); }
+.sv-goals-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; }
+.sv-goal-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow); }
+.sv-goal-top { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+.sv-goal-name { font-family:'Shippori Mincho',serif; font-size:15px; font-weight:600; color:var(--ink); flex:1; }
+.sv-goal-link { font-size:11px; color:var(--gray); margin-bottom:10px; }
+.sv-goal-amounts { display:flex; align-items:baseline; gap:6px; }
+.sv-goal-saved { font-family:'Shippori Mincho',serif; font-size:20px; font-weight:700; color:var(--plum); }
+.sv-goal-sep { font-size:12px; color:var(--gray); }
+.sv-goal-target { font-family:'Shippori Mincho',serif; font-size:14px; color:var(--gray); }
+.sv-goal-status { font-size:12px; color:var(--gray); }
+.sv-empty { text-align:center; padding:48px 20px; color:var(--gray); grid-column:1/-1; }
+.sv-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:200; display:flex; align-items:center; justify-content:center; }
+.sv-modal-overlay.hide { display:none; }
+.sv-modal { background:var(--white); border-radius:var(--radius); padding:24px; width:min(90vw,380px); box-shadow:0 8px 32px rgba(0,0,0,.18); display:flex; flex-direction:column; gap:10px; }
+.sv-modal-title { font-family:'Shippori Mincho',serif; font-size:17px; font-weight:600; color:var(--ink); margin-bottom:4px; }
+.sv-label { font-size:12px; color:var(--gray); font-weight:500; margin-top:4px; }
+.sv-input { border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:14px; color:var(--ink); background:var(--white); outline:none; width:100%; box-sizing:border-box; }
+.sv-input:focus { border-color:var(--lavender-md); }
+.sv-modal-btns { display:flex; gap:8px; justify-content:flex-end; margin-top:6px; }
+.sv-edit-btn { opacity:0.5; }
+.sv-edit-btn:hover { opacity:1; }
+.income-label-edit-btn,
+.sv-edit-btn,
+button[id="edit-cats-btn"] { display:inline-block; }
+.income-label-edit-btn,
+.sv-edit-btn { transform: scaleX(-1); }
+
+/* Shared small styles */
+.inc-rm-sm { font-size:11px; color:var(--lavender-md); font-weight:500; flex-shrink:0; }
+.inc-src-label { font-size:13px; color:var(--gray); font-weight:500; cursor:default; }
+
+/* C – Inline */
+.income-style-inline { display:block !important; }
+.inc-inline-block { width:100%; background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px; box-shadow:var(--shadow); }
+.inc-inline-row { display:flex; align-items:center; justify-content:space-between; padding:7px 0; border-bottom:0.5px solid var(--border); }
+.inc-inline-left { display:flex; align-items:center; gap:5px; }
+.inc-inline-right { display:flex; align-items:center; gap:5px; }
+.inc-inline-input { border:none; background:transparent; font-family:'Shippori Mincho',serif; font-size:16px; font-weight:600; color:var(--plum); width:120px; outline:none; text-align:right; }
+.inc-inline-input:focus { border-bottom:1px solid var(--lavender-md); }
+.inc-inline-total { display:flex; align-items:center; justify-content:space-between; padding:10px 0 0; }
+.inc-inline-total span:first-child { font-size:13px; font-weight:500; color:var(--ink); }
+
 /* Income */
 .income-card {
   background:var(--white); border:1px solid var(--border);
-  border-radius:var(--radius); padding:14px 20px; box-shadow:var(--shadow);
-  display:flex; align-items:center; gap:12px; margin-bottom:1.5rem; width:fit-content;
+  border-radius:var(--radius); padding:10px 14px; box-shadow:var(--shadow);
+  display:flex; align-items:center; gap:8px; margin-bottom:1.5rem; width:fit-content;
 }
-.income-label { font-size:13px; color:var(--gray); font-weight:500; white-space:nowrap; }
-.income-rm { font-size:13px; color:var(--lavender-md); font-weight:500; }
+.income-label { font-size:12px; color:var(--gray); font-weight:500; white-space:nowrap; }
+.income-rm { font-size:12px; color:var(--lavender-md); font-weight:500; }
 .income-input {
   border:none; background:transparent;
-  font-family:'Shippori Mincho',serif; font-size:22px; font-weight:600;
-  color:var(--plum); width:160px; outline:none;
+  font-family:'Shippori Mincho',serif; font-size:18px; font-weight:600;
+  color:var(--plum); width:110px; outline:none;
 }
 .income-input:focus { border-bottom:1.5px solid var(--lavender-md); }
+.income-total-val {
+  font-family: 'Shippori Mincho', serif; font-size: 18px; font-weight: 600; color: var(--plum);
+}
 
 /* Section label */
 .section-label { font-size:10px; font-weight:500; letter-spacing:.15em; text-transform:uppercase; color:var(--lavender-md); margin-bottom:8px; }
@@ -307,6 +443,14 @@ body { font-family:'DM Sans',sans-serif; background:var(--mist); color:var(--ink
 
   .income-card { border:1px solid #e0d7f8; box-shadow:none; padding:6px 12px;
     margin-bottom:9px; border-radius:8px; width:auto; display:inline-flex; }
+  .income-section { gap:6px; margin-bottom:6px; }
+  .income-plus-sign, .income-equals-sign { font-size:14px; }
+  .income-total-val { font-size:16px; }
+  .savings-goal-card { padding:10px 14px; margin-bottom:10px; box-shadow:none; border:1px solid #e0d7f8; }
+  .sg-bar-bg { height:5px; margin-bottom:8px; }
+  .sg-stat-val { font-size:13px; }
+  .sg-title { font-size:13px; }
+  .sg-input-wrap { display:none; }
   .income-input { font-size:16px; width:110px; }
   .income-label { font-size:12px; }
 
@@ -485,8 +629,9 @@ body { font-family:'DM Sans',sans-serif; background:var(--mist); color:var(--ink
 
   <!-- View tabs -->
   <div class="view-tabs">
-    <button class="view-tab active" id="tab-planner" onclick="switchView('planner')">Planner</button>
-    <button class="view-tab" id="tab-history" onclick="switchView('history')">Year Summary</button>
+    <button class="view-tab active" id="tab-planner" onclick="switchView('planner')">📅 Planner</button>
+    <button class="view-tab" id="tab-savings" onclick="switchView('savings')">💰 Savings</button>
+    <button class="view-tab" id="tab-history" onclick="switchView('history')">📊 Year Summary</button>
   </div>
 
   <!-- Month bar -->
@@ -494,15 +639,17 @@ body { font-family:'DM Sans',sans-serif; background:var(--mist); color:var(--ink
 
   <!-- ── PLANNER VIEW ── -->
   <div class="planner-view" id="planner-view">
-    <div class="income-card">
-      <span class="income-label">Monthly Income</span>
-      <span class="income-rm">RM</span>
-      <input type="number" class="income-input" id="income" min="0" step="100" placeholder="0" />
+    <!-- Income section -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+      <div class="section-label" style="margin-bottom:0;">Income</div>
+      <button class="edit-cats-btn" id="add-income-btn">+ Add Source</button>
     </div>
+    <div class="income-section" id="income-section"></div>
+
 
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
       <div class="section-label" style="margin-bottom:0;">Category Split</div>
-      <button class="edit-cats-btn" id="edit-cats-btn">✎ Edit Categories</button>
+      <button class="edit-cats-btn" id="edit-cats-btn"><span style="display:inline-block;transform:scaleX(-1);">✎</span> Edit Categories</button>
     </div>
     <div id="cat-pcts" class="pct-row"></div>
     <div class="pct-warn" id="pct-warn">Percentages must add up to 100%</div>
@@ -519,8 +666,13 @@ body { font-family:'DM Sans',sans-serif; background:var(--mist); color:var(--ink
   </div>
 
   <!-- ── HISTORY VIEW ── -->
-  <div class="history-view" id="history-view">
+  <div class="history-view hide" id="history-view">
     <div id="history-content"></div>
+  </div>
+
+  <!-- ── SAVINGS VIEW ── -->
+  <div class="savings-view hide" id="savings-view">
+    <div id="savings-content"></div>
   </div>
 
 </div>
@@ -573,11 +725,13 @@ const DEFAULT_CATS = () => ([
 // S.months[mi] = { income, note, categories:[{id,name,color,pct,expenses:[{label,amt}]}] }
 // S.catTemplate = current category structure (names, colours, labels) for new months
 
-const SK = "budget_planner_v5";
+const SK = "budget_planner_v6";
 
 function blankMonth(template) {
   return {
     income: 0,
+    extraIncome: 0,
+    incomeSources: null, // will be populated on first access
     note: "",
     categories: template.map(c => ({
       ...c,
@@ -592,15 +746,28 @@ function loadState() {
     const r = localStorage.getItem(SK);
     if (r) {
       const p = JSON.parse(r);
-      if (p.months) return p;
+      if (p.months) {
+        // Migrate: convert old income/extraIncome fields to incomeSources array
+        p.months.forEach(m => {
+          if (!m.incomeSources) {
+            const sources = [{ id: "src_main", label: "Monthly Income", amt: Number(m.income)||0 }];
+            if ((Number(m.extraIncome)||0) > 0 || p.extraIncomeLabel) {
+              sources.push({ id: "src_extra", label: p.extraIncomeLabel || "Extra Income", amt: Number(m.extraIncome)||0 });
+            }
+            m.incomeSources = sources;
+          }
+        });
+        if (p.savingsGoal === undefined) p.savingsGoal = 0;
+        if (!p.savingsGoals) p.savingsGoals = [];
+        if (!p.incomeStyle) p.incomeStyle = "inline";
+        return p;
+      }
     }
   } catch(e) {}
-  // fresh start
   const template = DEFAULT_CATS();
-  const curM = new Date().getMonth();
-  const months = Array.from({length:12}, (_,i) => blankMonth(template));
-  months[curM].income = 5000;
-  return { months, catTemplate: template };
+  const months = Array.from({length:12}, () => blankMonth(template));
+  months[new Date().getMonth()].incomeSources = [{ id:"src_main", label:"Monthly Income", amt:5000 }];
+  return { months, catTemplate: template, savingsGoal: 0, savingsGoals: [], incomeStyle: "inline" };
 }
 
 let S = loadState();
@@ -628,7 +795,9 @@ const fmt    = n => "RM " + Math.abs(Number(n)||0).toFixed(2).replace(/\B(?=(\d{
 const fmtR   = n => "RM " + Math.round(Number(n)||0).toLocaleString();
 const sumExp = cat => cat.expenses.reduce((a,b) => a+(Number(b.amt)||0), 0);
 const totalPct = () => curData().categories.reduce((a,c) => a+(Number(c.pct)||0), 0);
-const budgetOf = cat => (Number(curData().income)||0) * (Number(cat.pct)||0) / 100;
+const getSources = () => curData().incomeSources || [{ id:"src_main", label:"Monthly Income", amt: Number(curData().income)||0 }];
+const totalIncome = () => getSources().reduce((a,s) => a+(Number(s.amt)||0), 0);
+const budgetOf = cat => totalIncome() * (Number(cat.pct)||0) / 100;
 
 // Accumulated amount for a label across months up to (and including) curMonth
 function accumForLabel(catId, label) {
@@ -646,7 +815,7 @@ function accumForLabel(catId, label) {
 function renderMonthBar() {
   const bar = document.getElementById("month-bar");
   const pills = MONTHS.map((m, i) => {
-    const hasData = S.months[i].income > 0 || S.months[i].note || S.months[i].categories.some(c => c.expenses.some(e => Number(e.amt) > 0));
+    const hasData = (S.months[i].incomeSources ? S.months[i].incomeSources.some(s=>Number(s.amt)>0) : S.months[i].income > 0 || S.months[i].extraIncome > 0) || S.months[i].note || S.months[i].categories.some(c => c.expenses.some(e => Number(e.amt) > 0));
     return `<button class="month-tab ${i===curMonth?'active':''} ${hasData&&i!==curMonth?'has-data':''}"
       onclick="switchMonth(${i})">${m}</button>`;
   }).join("");
@@ -681,7 +850,7 @@ function copyLastMonth() {
   const prev = curMonth === 0 ? 11 : curMonth - 1;
   const src  = S.months[prev];
   const dst  = S.months[curMonth];
-  dst.income = src.income;
+  dst.incomeSources = src.incomeSources ? src.incomeSources.map(s=>({...s})) : [{ id:"src_main", label:"Monthly Income", amt: Number(src.income)||0 }];
   dst.categories = src.categories.map(c => ({
     ...c,
     color: { ...c.color },
@@ -698,7 +867,9 @@ function copyLastMonth() {
 
 function clearAmounts() {
   if (!confirm(`Clear all amounts for ${MONTHS[curMonth]}? Labels will be kept.`)) return;
-  curData().income = 0;
+  const d = curData();
+  if (d.incomeSources) d.incomeSources.forEach(s => s.amt = 0);
+  else { d.income = 0; d.extraIncome = 0; }
   curData().categories.forEach(cat => {
     cat.expenses.forEach(e => { e.amt = 0; });
   });
@@ -709,9 +880,109 @@ function clearAmounts() {
   renderBreakdown();
 }
 
+function buildIncomeSection() {
+  const sources = getSources();
+  const wrap = document.getElementById("income-section");
+  wrap.innerHTML = "";
+  wrap.className = "income-section income-style-inline";
+
+  const total = totalIncome();
+  const fmtAmt = n => "RM " + (Number(n)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  const block = document.createElement("div");
+  block.className = "inc-inline-block";
+  sources.forEach(src => {
+    const row = document.createElement("div");
+    row.className = "inc-inline-row";
+    row.innerHTML = `
+      <div class="inc-inline-left">
+        <span class="inc-src-label" data-src="${src.id}">${src.label}</span>
+        <button class="income-label-edit-btn" data-rename="${src.id}" title="Rename" style="transform:scaleX(-1);">✎</button>
+        ${sources.length > 1 ? `<button class="income-del-btn" data-del="${src.id}" title="Remove">✕</button>` : ""}
+      </div>
+      <div class="inc-inline-right">
+        <span class="inc-rm-sm">RM</span>
+        <input type="number" class="inc-inline-input income-src-input" data-src="${src.id}" value="${src.amt > 0 ? Number(src.amt).toFixed(2) : ""}" placeholder="0.00" min="0" step="100"/>
+      </div>`;
+    block.appendChild(row);
+  });
+  const tot = document.createElement("div");
+  tot.className = "inc-inline-total";
+  tot.innerHTML = `<span>Total</span><span class="income-total-val" id="income-total">${fmtAmt(total)}</span>`;
+  block.appendChild(tot);
+  wrap.appendChild(block);
+
+  // Wire inputs
+  wrap.querySelectorAll(".income-src-input").forEach(inp => {
+    inp.addEventListener("input", function() {
+      const src = getSources().find(s => s.id === this.dataset.src);
+      if (src) { src.amt = Number(this.value)||0; save(); updateIncomeTotal(); renderSummary(); refreshCards(); }
+    });
+    inp.addEventListener("blur", function() {
+      const v = Number(this.value)||0;
+      this.value = v > 0 ? v.toFixed(2) : "";
+    });
+  });
+
+  // Wire rename
+  wrap.querySelectorAll("[data-rename]").forEach(btn => {
+    btn.addEventListener("click", function() {
+      const id = this.dataset.rename;
+      const src = getSources().find(s => s.id === id);
+      if (!src) return;
+      const labelEl = wrap.querySelector(`.inc-src-label[data-src="${id}"]`);
+      const current = src.label;
+      const inp = document.createElement("input");
+      inp.type = "text"; inp.value = current; inp.maxLength = 28;
+      inp.className = "income-label-rename-input";
+      labelEl.replaceWith(inp);
+      inp.focus(); inp.select();
+      const editBtn = this;
+      editBtn.style.display = "none";
+      function commit() {
+        const val = inp.value.trim() || current;
+        src.label = val; save();
+        const newSpan = document.createElement("span");
+        newSpan.className = "inc-src-label";
+        newSpan.dataset.src = id;
+        newSpan.textContent = val;
+        inp.replaceWith(newSpan);
+        editBtn.style.display = "";
+      }
+      inp.addEventListener("blur", commit);
+      inp.addEventListener("keydown", e => { if(e.key==="Enter"){e.preventDefault();commit();} if(e.key==="Escape"){inp.value=current;commit();} });
+    });
+  });
+
+  // Wire delete
+  wrap.querySelectorAll("[data-del]").forEach(btn => {
+    btn.addEventListener("click", function() {
+      const d = curData();
+      d.incomeSources = getSources().filter(s => s.id !== this.dataset.del);
+      save(); buildIncomeSection(); renderSummary(); refreshCards();
+    });
+  });
+}
+
+function updateIncomeTotal() {
+  const el = document.getElementById("income-total");
+  if (el) el.textContent = "RM " + totalIncome().toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function refreshCards() {
+  curData().categories.forEach(cat => {
+    const c = document.getElementById(`card-${cat.id}`);
+    if (c) updateCardDynamic(c, cat, budgetOf(cat));
+  });
+}
+
 function loadMonthIntoUI() {
   const d = curData();
-  document.getElementById("income").value = d.income || "";
+  if (!d.incomeSources) {
+    d.incomeSources = [{ id:"src_main", label:"Monthly Income", amt: Number(d.income)||0 }];
+    if (Number(d.extraIncome)||0) d.incomeSources.push({ id:"src_extra", label:"Extra Income", amt: Number(d.extraIncome)||0 });
+  }
+  buildIncomeSection();
   document.getElementById("month-note").value = d.note || "";
   buildPills();
 }
@@ -719,10 +990,14 @@ function loadMonthIntoUI() {
 // ── View switching ────────────────────────────────────────────────────────────
 function switchView(v) {
   document.getElementById("planner-view").className = "planner-view" + (v==="planner" ? "" : " hide");
-  document.getElementById("history-view").className = "history-view"  + (v==="history" ? " show" : "");
+  document.getElementById("history-view").className = "history-view"  + (v==="history" ? " show" : " hide");
+  document.getElementById("savings-view").className = "savings-view"  + (v==="savings" ? "" : " hide");
   document.getElementById("tab-planner").className  = "view-tab" + (v==="planner" ? " active" : "");
   document.getElementById("tab-history").className  = "view-tab" + (v==="history" ? " active" : "");
+  document.getElementById("tab-savings").className  = "view-tab" + (v==="savings" ? " active" : "");
+  document.getElementById("month-bar").style.display = v === "savings" ? "none" : "";
   if (v === "history") renderHistory();
+  if (v === "savings") renderSavingsPage();
 }
 
 // ── Pill + summary ────────────────────────────────────────────────────────────
@@ -751,7 +1026,7 @@ function buildPills() {
 }
 
 function renderSummary() {
-  const income = Number(curData().income)||0;
+  const income = totalIncome();
   const total  = totalPct();
   const warn = document.getElementById("pct-warn");
   if (total === 100) {
@@ -790,6 +1065,7 @@ function renderSummary() {
       </div>
     </div>`;
   }).join("");
+
 }
 
 // ── Breakdown (focus-safe render) ─────────────────────────────────────────────
@@ -906,6 +1182,7 @@ function attachListeners(card, cat) {
       save();
       updateCardDynamic(card, cat, budgetOf(cat));
       renderSummary();
+      if (!document.getElementById("savings-view").classList.contains("hide")) renderSavingsPage();
     });
     inp.addEventListener("blur", function() {
       const v = Number(this.value)||0;
@@ -929,6 +1206,157 @@ function attachListeners(card, cat) {
   });
 }
 
+// ── Savings Page ──────────────────────────────────────────────────────────────
+function getSavingsGoals() {
+  if (!S.savingsGoals) S.savingsGoals = [];
+  return S.savingsGoals;
+}
+
+function yearSavingsActual() {
+  // Sum all savings category expenses across all 12 months, grouped by label
+  const byLabel = {};
+  S.months.forEach(month => {
+    const savCat = month.categories.find(c => c.id === "savings");
+    if (!savCat) return;
+    savCat.expenses.forEach(e => {
+      byLabel[e.label] = (byLabel[e.label] || 0) + (Number(e.amt) || 0);
+    });
+  });
+  return byLabel;
+}
+
+function totalYearlySaved() {
+  return Object.values(yearSavingsActual()).reduce((a, v) => a + v, 0);
+}
+
+function renderSavingsPage() {
+  const el = document.getElementById("savings-content");
+  const goals = getSavingsGoals();
+  const byLabel = yearSavingsActual();
+  const totalSaved = totalYearlySaved();
+  const totalGoal = goals.reduce((a, g) => a + (Number(g.target) || 0), 0);
+  const totalRemain = Math.max(0, totalGoal - totalSaved);
+  const totalPctDone = totalGoal > 0 ? Math.min(100, Math.round(totalSaved / totalGoal * 100)) : 0;
+
+  // Collect all unique savings labels from all months
+  const allLabels = [];
+  S.months.forEach(m => {
+    const sc = m.categories.find(c => c.id === "savings");
+    if (sc) sc.expenses.forEach(e => { if (!allLabels.includes(e.label)) allLabels.push(e.label); });
+  });
+
+  el.innerHTML = `
+    <div class="sv-header">
+      <div class="sv-title-row">
+        <div>
+          <div class="section-label" style="margin-bottom:2px;">Savings Goals</div>
+          <div style="font-size:12px;color:var(--gray);">Set yearly targets and track progress from your Planner entries</div>
+        </div>
+        <button class="edit-cats-btn" id="sv-add-goal-btn">+ Add Goal</button>
+      </div>
+    </div>
+
+    <div class="sv-goals-grid" id="sv-goals-grid">
+      ${goals.length === 0 ? `
+        <div class="sv-empty">
+          <div style="font-size:32px;margin-bottom:8px;">🎯</div>
+          <div style="font-size:14px;color:var(--gray);">No goals yet — click <strong>+ Add Goal</strong> to set a savings target</div>
+        </div>` :
+        goals.map((g, gi) => {
+          const saved = byLabel[g.label] || 0;
+          const target = Number(g.target) || 0;
+          const pct = target > 0 ? Math.min(100, Math.round(saved / target * 100)) : 0;
+          const remain = Math.max(0, target - saved);
+          const done = saved >= target && target > 0;
+          return `
+          <div class="sv-goal-card">
+            <div class="sv-goal-top">
+              <div class="sv-goal-name">${g.name}</div>
+              <button class="income-label-edit-btn sv-edit-btn" data-gi="${gi}" title="Edit">✎</button>
+              <button class="income-del-btn sv-del-btn" data-gi="${gi}" title="Remove">✕</button>
+            </div>
+            ${g.label ? `<div class="sv-goal-link">Tracking: <span style="color:var(--lavender-md);">${g.label}</span></div>` : `<div class="sv-goal-link" style="color:#f59e0b;">⚠ No savings item linked</div>`}
+            <div class="sv-overall-stats">
+              <div class="sv-stat"><span class="sv-stat-label">Target</span><span class="sv-stat-val">${target > 0 ? fmt(target) : '—'}</span></div>
+              <div class="sv-stat"><span class="sv-stat-label">Saved</span><span class="sv-stat-val" style="color:#10b981;">${fmt(saved)}</span></div>
+              <div class="sv-stat"><span class="sv-stat-label">Remaining</span><span class="sv-stat-val" style="color:var(--plum);">${done ? '🎉 Done!' : target > 0 ? fmt(remain) : '—'}</span></div>
+              <div class="sv-stat"><span class="sv-stat-label">Progress</span><span class="sv-stat-val">${target > 0 ? pct + '%' : '—'}</span></div>
+            </div>
+            <div class="sv-bar-bg" style="margin-top:10px;">
+              <div class="sv-bar-fill" style="width:${pct}%;background:${done?'#10b981':'var(--lavender-md)'};"></div>
+            </div>
+          </div>`;
+        }).join("")
+      }
+    </div>
+
+    <!-- Add/Edit Goal Modal -->
+    <div class="sv-modal-overlay hide" id="sv-modal">
+      <div class="sv-modal">
+        <div class="sv-modal-title" id="sv-modal-title">Add Savings Goal</div>
+        <label class="sv-label">Goal name</label>
+        <input class="sv-input" id="sv-g-name" placeholder="e.g. Emergency Fund" maxlength="40" />
+        <label class="sv-label">Link to savings item</label>
+        <select class="sv-input" id="sv-g-label">
+          <option value="">— Not linked —</option>
+          ${allLabels.map(l => `<option value="${l}">${l}</option>`).join("")}
+        </select>
+        <label class="sv-label">Yearly target (RM)</label>
+        <input class="sv-input" id="sv-g-target" type="number" min="0" step="100" placeholder="0" />
+        <div class="sv-modal-btns">
+          <button class="month-action-btn" id="sv-modal-cancel">Cancel</button>
+          <button class="edit-cats-btn" id="sv-modal-save">Save Goal</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Wire up add goal
+  document.getElementById("sv-add-goal-btn").addEventListener("click", () => openSvModal());
+
+  // Wire up edit/delete
+  el.querySelectorAll(".sv-edit-btn").forEach(btn => {
+    btn.addEventListener("click", function() { openSvModal(+this.dataset.gi); });
+  });
+  el.querySelectorAll(".sv-del-btn").forEach(btn => {
+    btn.addEventListener("click", function() {
+      if (!confirm("Remove this goal?")) return;
+      S.savingsGoals.splice(+this.dataset.gi, 1);
+      save(); renderSavingsPage();
+    });
+  });
+
+  // Modal logic
+  let editingGi = null;
+  function openSvModal(gi) {
+    editingGi = gi !== undefined ? gi : null;
+    const g = editingGi !== null ? goals[editingGi] : null;
+    document.getElementById("sv-modal-title").textContent = g ? "Edit Goal" : "Add Savings Goal";
+    document.getElementById("sv-g-name").value   = g ? g.name : "";
+    document.getElementById("sv-g-label").value  = g ? (g.label || "") : "";
+    document.getElementById("sv-g-target").value = g ? (g.target || "") : "";
+    document.getElementById("sv-modal").classList.remove("hide");
+    document.getElementById("sv-g-name").focus();
+  }
+  function closeSvModal() { document.getElementById("sv-modal").classList.add("hide"); }
+
+  document.getElementById("sv-modal-cancel").addEventListener("click", closeSvModal);
+  document.getElementById("sv-modal").addEventListener("click", function(e) { if(e.target===this) closeSvModal(); });
+  document.getElementById("sv-modal-save").addEventListener("click", function() {
+    const name   = document.getElementById("sv-g-name").value.trim();
+    const label  = document.getElementById("sv-g-label").value;
+    const target = Number(document.getElementById("sv-g-target").value) || 0;
+    if (!name) { document.getElementById("sv-g-name").focus(); return; }
+    if (!S.savingsGoals) S.savingsGoals = [];
+    if (editingGi !== null) {
+      S.savingsGoals[editingGi] = { name, label, target };
+    } else {
+      S.savingsGoals.push({ name, label, target });
+    }
+    save(); closeSvModal(); renderSavingsPage();
+  });
+}
+
 // ── History / Year Summary ────────────────────────────────────────────────────
 function renderHistory() {
   const el = document.getElementById("history-content");
@@ -942,7 +1370,8 @@ function renderHistory() {
   // Month headers — only show months that have any data
   const activeMons = MONTHS.map((m,i) => {
     const d = S.months[i];
-    return d.income > 0 || d.note || d.categories.some(c => c.expenses.some(e => Number(e.amt) > 0)) ? i : null;
+    const hasIncome = d.incomeSources ? d.incomeSources.some(s=>Number(s.amt)>0) : d.income > 0;
+    return hasIncome || d.note || d.categories.some(c => c.expenses.some(e => Number(e.amt) > 0)) ? i : null;
   }).filter(i => i !== null);
 
   if (!activeMons.length) {
@@ -957,8 +1386,15 @@ function renderHistory() {
   let rows = `<tr><th>Item</th>${thCols}</tr>`;
 
   // Income row
-  const incVals = activeMons.map(i => `<td class="${i===curMonth?'month-active-col':''}">${S.months[i].income > 0 ? fmt(S.months[i].income) : '—'}</td>`).join("");
-  const incTotal = activeMons.reduce((a,i) => a + (Number(S.months[i].income)||0), 0);
+  const incVals = activeMons.map(i => {
+    const m = S.months[i];
+    const total = m.incomeSources ? m.incomeSources.reduce((a,s)=>a+(Number(s.amt)||0),0) : (Number(m.income)||0)+(Number(m.extraIncome)||0);
+    return `<td class="${i===curMonth?'month-active-col':''}">${total > 0 ? fmt(total) : '—'}</td>`;
+  }).join("");
+  const incTotal = activeMons.reduce((a,i) => {
+    const m = S.months[i];
+    return a + (m.incomeSources ? m.incomeSources.reduce((s,src)=>s+(Number(src.amt)||0),0) : (Number(m.income)||0)+(Number(m.extraIncome)||0));
+  }, 0);
   rows += `<tr><td>💰 Income</td>${incVals}<td>${fmt(incTotal)}</td></tr>`;
 
   // Per category
@@ -1119,15 +1555,17 @@ document.getElementById("modal-add-cat").addEventListener("click", function() {
   renderModalList();
 });
 
-// ── Income input ──────────────────────────────────────────────────────────────
-document.getElementById("income").addEventListener("input", function() {
-  curData().income = Number(this.value)||0;
+// ── Add income source ─────────────────────────────────────────────────────────
+document.getElementById("add-income-btn").addEventListener("click", function() {
+  const d = curData();
+  if (!d.incomeSources) d.incomeSources = getSources();
+  const newId = "src_" + Date.now();
+  d.incomeSources.push({ id: newId, label: "New Income", amt: 0 });
   save();
-  renderSummary();
-  curData().categories.forEach(cat => {
-    const c = document.getElementById(`card-${cat.id}`);
-    if (c) updateCardDynamic(c, cat, budgetOf(cat));
-  });
+  buildIncomeSection();
+  // Auto-trigger rename on the new label
+  const newBtn = document.querySelector(`[data-rename="${newId}"]`);
+  if (newBtn) newBtn.click();
 });
 
 // ── Note input ────────────────────────────────────────────────────────────────
@@ -1164,7 +1602,10 @@ function printMonth() {
       const d = S.months[i];
       return d.income > 0 || d.note || d.categories.some(c => c.expenses.some(e => Number(e.amt) > 0)) ? i : null;
     }).filter(i => i !== null);
-    const totalIncome = activeMons.reduce((a,i) => a + (Number(S.months[i].income)||0), 0);
+    const totalIncome = activeMons.reduce((a,i) => {
+      const m = S.months[i];
+      return a + (m.incomeSources ? m.incomeSources.reduce((s,src)=>s+(Number(src.amt)||0),0) : (Number(m.income)||0)+(Number(m.extraIncome)||0));
+    }, 0);
     const totalSpent  = activeMons.reduce((a,i) => {
       return a + S.months[i].categories.reduce((b,c) => b + c.expenses.reduce((s,e) => s+(Number(e.amt)||0),0),0);
     }, 0);
@@ -1177,7 +1618,7 @@ function printMonth() {
     pageStyle.textContent = '@page { size: A4 portrait; margin: 12mm 13mm 12mm 13mm; }';
 
     const d = curData();
-    const income = Number(d.income) || 0;
+    const income = d.incomeSources ? d.incomeSources.reduce((a,s)=>a+(Number(s.amt)||0),0) : (Number(d.income)||0)+(Number(d.extraIncome)||0);
     const totalSpent = d.categories.reduce((a,c) => a + c.expenses.reduce((b,e) => b+(Number(e.amt)||0),0), 0);
     document.getElementById("print-header-meta").innerHTML =
       `<strong>${MONTHS[curMonth]} ${new Date().getFullYear()}</strong><br>` +
