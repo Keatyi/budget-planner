@@ -1231,20 +1231,24 @@ function getSavingsGoals() {
 }
 
 function yearSavingsActual() {
-  // Sum all savings category expenses across all 12 months, grouped by label
   const byLabel = {};
   S.months.forEach(month => {
-    const savCat = month.categories.find(c => c.id === "savings");
-    if (!savCat) return;
-    savCat.expenses.forEach(e => {
-      byLabel[e.label] = (byLabel[e.label] || 0) + (Number(e.amt) || 0);
+    month.categories.forEach(cat => {
+      cat.expenses.forEach(e => {
+        const key = (e.label || "").trim();
+        if (key) byLabel[key] = (byLabel[key] || 0) + (Number(e.amt) || 0);
+      });
     });
   });
   return byLabel;
 }
 
 function totalYearlySaved() {
-  return Object.values(yearSavingsActual()).reduce((a, v) => a + v, 0);
+  const byLabel = yearSavingsActual();
+  const goals = getSavingsGoals();
+  // Sum only the labels that are linked to a goal to avoid double-counting all expenses
+  const linkedLabels = new Set(goals.map(g => (g.label||"").trim()).filter(Boolean));
+  return Array.from(linkedLabels).reduce((a, lbl) => a + (byLabel[lbl] || 0), 0);
 }
 
 function renderSavingsPage() {
@@ -1256,11 +1260,12 @@ function renderSavingsPage() {
   const totalRemain = Math.max(0, totalGoal - totalSaved);
   const totalPctDone = totalGoal > 0 ? Math.min(100, Math.round(totalSaved / totalGoal * 100)) : 0;
 
-  // Collect all unique savings labels from all months
+  // Collect all unique expense labels from all categories across all months
   const allLabels = [];
   S.months.forEach(m => {
-    const sc = m.categories.find(c => c.id === "savings");
-    if (sc) sc.expenses.forEach(e => { if (!allLabels.includes(e.label)) allLabels.push(e.label); });
+    m.categories.forEach(cat => {
+      cat.expenses.forEach(e => { if (e.label && !allLabels.includes(e.label)) allLabels.push(e.label); });
+    });
   });
 
   el.innerHTML = `
@@ -1281,7 +1286,7 @@ function renderSavingsPage() {
           <div style="font-size:14px;color:var(--gray);">No goals yet — click <strong>+ Add Goal</strong> to set a savings target</div>
         </div>` :
         goals.map((g, gi) => {
-          const saved = byLabel[g.label] || 0;
+          const saved = byLabel[(g.label || "").trim()] || 0;
           const target = Number(g.target) || 0;
           const pct = target > 0 ? Math.min(100, Math.round(saved / target * 100)) : 0;
           const remain = Math.max(0, target - saved);
@@ -1314,10 +1319,24 @@ function renderSavingsPage() {
         <div class="sv-modal-title" id="sv-modal-title">Add Savings Goal</div>
         <label class="sv-label">Goal name</label>
         <input class="sv-input" id="sv-g-name" placeholder="e.g. Emergency Fund" maxlength="40" />
-        <label class="sv-label">Link to savings item</label>
+        <label class="sv-label">Link to any expense item</label>
         <select class="sv-input" id="sv-g-label">
           <option value="">— Not linked —</option>
-          ${allLabels.map(l => `<option value="${l}">${l}</option>`).join("")}
+          ${(() => {
+            const seen = new Set();
+            let opts = "";
+            S.months.forEach(m => {
+              m.categories.forEach(cat => {
+                cat.expenses.forEach(e => {
+                  if (e.label && !seen.has(e.label)) {
+                    seen.add(e.label);
+                    opts += `<option value="${e.label}">${e.label} (${cat.name})</option>`;
+                  }
+                });
+              });
+            });
+            return opts;
+          })()}
         </select>
         <label class="sv-label">Yearly target (RM)</label>
         <input class="sv-input" id="sv-g-target" type="number" min="0" step="100" placeholder="0" />
@@ -1362,7 +1381,7 @@ function renderSavingsPage() {
   document.getElementById("sv-modal").addEventListener("click", function(e) { if(e.target===this) closeSvModal(); });
   document.getElementById("sv-modal-save").addEventListener("click", function() {
     const name   = document.getElementById("sv-g-name").value.trim();
-    const label  = document.getElementById("sv-g-label").value;
+    const label  = (document.getElementById("sv-g-label").value || "").trim();
     const target = Number(document.getElementById("sv-g-target").value) || 0;
     if (!name) { document.getElementById("sv-g-name").focus(); return; }
     if (!S.savingsGoals) S.savingsGoals = [];
