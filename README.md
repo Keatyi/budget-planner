@@ -34,7 +34,7 @@ A clean, minimal monthly budget planner that runs entirely in the browser — no
 
 ### 💰 Savings
 
-- Add **savings goals** with a custom name, yearly target amount, and a link to a specific savings line item in the Planner (e.g. "Emergency Fund")
+- Add **savings goals** with a custom name, yearly target amount, and a link to a specific line item in the Planner (e.g. "Emergency Fund")
 - Each goal card shows: **Target / Saved / Remaining / Progress %** with a progress bar
 - Progress updates **automatically** as you log savings amounts in the Planner — no manual input needed on the Savings page
 - Goals are **editable and deletable** at any time
