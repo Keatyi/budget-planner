@@ -427,7 +427,8 @@ button[id="edit-cats-btn"] { display:inline-block; }
 
   .theme-toggle, .save-pdf-btn, .blob1, .blob2, .bf-strip,
   .view-tabs, .month-bar, .month-actions, .pct-warn, .add-btn, .del-btn,
-  .edit-cats-btn, .save-dot, #notice { display:none !important; }
+  .edit-cats-btn, .save-dot, #notice,
+  .income-label-edit-btn, .income-del-btn, #add-income-btn { display:none !important; }
 
   html, body { overflow:visible; height:auto; }
   .wrap { max-width:100%; padding:0; }
@@ -511,15 +512,32 @@ button[id="edit-cats-btn"] { display:inline-block; }
   .over-box span:last-child  { color:#dc2626 !important; }
 
   /* Planner mode (default) */
-  body:not([data-print="history"]) .planner-view { display:block !important; }
-  body:not([data-print="history"]) .planner-view.hide { display:block !important; }
-  body:not([data-print="history"]) .history-view { display:none !important; }
+  body[data-print="planner"] .planner-view { display:block !important; }
+  body[data-print="planner"] .history-view,
+  body[data-print="planner"] .savings-view { display:none !important; }
+  body:not([data-print]) .planner-view { display:block !important; }
+  body:not([data-print]) .history-view,
+  body:not([data-print]) .savings-view { display:none !important; }
 
   /* History / Year Summary mode */
   body[data-print="history"] .planner-view,
-  body[data-print="history"] .planner-view.hide { display:none !important; }
+  body[data-print="history"] .savings-view { display:none !important; }
   body[data-print="history"] .history-view { display:block !important; }
-  body[data-print="history"] .history-view.show { display:block !important; }
+
+  /* Savings mode */
+  body[data-print="savings"] .planner-view,
+  body[data-print="savings"] .history-view { display:none !important; }
+  body[data-print="savings"] .savings-view { display:block !important; }
+  body[data-print="savings"] .sv-modal-overlay { display:none !important; }
+  body[data-print="savings"] #add-income-btn { display:none !important; }
+
+  /* Savings goal cards print styles */
+  .sv-goals-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
+  .sv-goal-card { box-shadow:none; border:1px solid #e0d7f8; border-radius:9px; padding:12px; break-inside:avoid; }
+  .sv-goal-name { font-size:14px; }
+  .sv-overall-stats { gap:16px; margin-bottom:8px; }
+  .sv-stat-val { font-size:14px; }
+  .sv-bar-bg { height:6px; margin-top:8px; }
 
   /* Year summary table print styles */
   .history-table-wrap { overflow:visible; box-shadow:none; border-radius:0; }
@@ -1590,8 +1608,8 @@ applyTheme(localStorage.getItem("theme") === "dark");
 // ── Print / Save PDF ──────────────────────────────────────────────────────────
 function printMonth() {
   const isHistory = document.getElementById("history-view").classList.contains("show");
+  const isSavings = !document.getElementById("savings-view").classList.contains("hide");
 
-  // Inject a temporary <style> to set @page orientation per view
   const pageStyle = document.createElement("style");
   pageStyle.id = "print-page-override";
 
@@ -1606,7 +1624,7 @@ function printMonth() {
       const m = S.months[i];
       return a + (m.incomeSources ? m.incomeSources.reduce((s,src)=>s+(Number(src.amt)||0),0) : (Number(m.income)||0)+(Number(m.extraIncome)||0));
     }, 0);
-    const totalSpent  = activeMons.reduce((a,i) => {
+    const totalSpent = activeMons.reduce((a,i) => {
       return a + S.months[i].categories.reduce((b,c) => b + c.expenses.reduce((s,e) => s+(Number(e.amt)||0),0),0);
     }, 0);
     document.getElementById("print-header-meta").innerHTML =
@@ -1614,6 +1632,19 @@ function printMonth() {
       `Total income: <strong>RM ${totalIncome.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</strong> &middot; ` +
       `Total spent: <strong>RM ${totalSpent.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</strong>`;
     document.body.setAttribute("data-print", "history");
+
+  } else if (isSavings) {
+    pageStyle.textContent = '@page { size: A4 portrait; margin: 12mm 13mm 12mm 13mm; }';
+
+    const goals = getSavingsGoals();
+    const totalGoal = goals.reduce((a,g) => a+(Number(g.target)||0), 0);
+    const totalSaved = totalYearlySaved();
+    document.getElementById("print-header-meta").innerHTML =
+      `<strong>Savings Goals ${new Date().getFullYear()}</strong><br>` +
+      `Total goal: <strong>RM ${totalGoal.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</strong> &middot; ` +
+      `Saved: <strong>RM ${totalSaved.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</strong>`;
+    document.body.setAttribute("data-print", "savings");
+
   } else {
     pageStyle.textContent = '@page { size: A4 portrait; margin: 12mm 13mm 12mm 13mm; }';
 
@@ -1628,7 +1659,6 @@ function printMonth() {
   }
 
   document.head.appendChild(pageStyle);
-  // Strip highlight class before printing so all header/cells look uniform
   const highlighted = document.querySelectorAll(".month-active-col");
   highlighted.forEach(el => el.classList.remove("month-active-col"));
   window.print();
